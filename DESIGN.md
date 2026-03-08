@@ -11,7 +11,7 @@ This document defines the architectural boundaries and design principles of the 
 - Scaffold Azure Functions Python v2 projects with explicit, maintainable defaults.
 - Keep the CLI predictable and easy to understand.
 - Generate projects that are immediately testable and lint-clean.
-- Stay aligned with the wider Azure Functions Python tooling ecosystem.
+- Keep initial project creation and later project expansion under the same CLI.
 
 ## Non-Goals
 
@@ -30,12 +30,11 @@ This project does not aim to:
 - Trigger entrypoints and service logic should stay separated.
 - Public CLI behavior should evolve conservatively.
 
-## Integration Boundaries
+## Product Boundaries
 
-- Runtime validation belongs to `azure-functions-validation`.
-- OpenAPI generation belongs to `azure-functions-openapi`.
-- Project diagnostics belong to `azure-functions-doctor`.
-- This repository owns project generation, template rendering, and scaffold defaults.
+- This repository owns project generation, preset handling, and scaffold defaults.
+- It may generate code that teams later extend by hand.
+- It should not become a deployment framework or runtime abstraction layer.
 
 ## Compatibility Policy
 
@@ -48,3 +47,4 @@ This project does not aim to:
 - Template behavior changes require tests and docs updates.
 - Generated-project quality gates are user-facing behavior.
 - Experimental templates or commands must be clearly labeled in code and docs.
+- Interactive flows must remain scriptable through equivalent non-interactive flags.

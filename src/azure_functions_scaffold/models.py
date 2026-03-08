@@ -8,6 +8,14 @@ from pathlib import Path
 class TemplateContext:
     project_name: str
     project_slug: str
+    python_version: str
+    python_upper_bound: str
+    preset_name: str
+    include_github_actions: bool
+    initialize_git: bool
+    include_ruff: bool
+    include_mypy: bool
+    include_pytest: bool
 
 
 @dataclass(frozen=True)
@@ -15,3 +23,19 @@ class TemplateSpec:
     name: str
     description: str
     root: Path
+
+
+@dataclass(frozen=True)
+class PresetSpec:
+    name: str
+    description: str
+    tooling: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ProjectOptions:
+    preset_name: str
+    python_version: str
+    tooling: tuple[str, ...]
+    include_github_actions: bool
+    initialize_git: bool

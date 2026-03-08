@@ -27,6 +27,9 @@ Without a scaffold, each team reinvents these decisions and quality drifts acros
 - Align scaffolded output with modern Python packaging and quality tooling.
 - Keep the CLI small and explicit.
 - Produce generated projects that are easy to extend by hand.
+- Support interactive bootstrap for first-time project creation.
+- Support opinionated presets that reduce repeated CLI decisions.
+- Support adding new function modules after initial project creation.
 
 ## Non-Goals
 
@@ -44,7 +47,10 @@ Without a scaffold, each team reinvents these decisions and quality drifts acros
 ## Core Use Cases
 
 - Create a new HTTP-trigger Azure Functions project from a single command
+- Create a new project interactively without memorizing flags
+- Choose between `minimal`, `standard`, and `strict` presets
 - Generate project files that already include tests and linting defaults
+- Add new HTTP and timer functions to an existing scaffolded codebase
 - Standardize project layout across repositories
 
 ## Success Criteria

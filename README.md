@@ -16,15 +16,19 @@ Scaffolding CLI for production-leaning Azure Functions Python v2 projects.
 - Azure Functions Python **v2 programming model**
 - Decorator-based `func.FunctionApp()` applications
 - Opinionated but lightweight project generation
-- Embedded templates with test and lint defaults
+- Interactive bootstrap, presets, and function expansion
 
 This project does **not** support the legacy `function.json`-based Python v1 programming model.
 
 ## Features
 
 - `azure-functions-scaffold new <project-name>`
+- `azure-functions-scaffold new --interactive`
+- `azure-functions-scaffold new <project-name> --preset minimal|standard|strict`
+- `azure-functions-scaffold add http <function-name>`
+- `azure-functions-scaffold add timer <function-name>`
 - Embedded HTTP-trigger project template
-- Test, lint, and packaging defaults in generated output
+- Configurable test, lint, and packaging defaults in generated output
 - Small service-oriented application layout
 
 ## Installation
@@ -49,6 +53,18 @@ Create a new project in the current directory:
 azure-functions-scaffold new my-api
 ```
 
+Create a project interactively:
+
+```bash
+azure-functions-scaffold new --interactive
+```
+
+Create a strict project with GitHub Actions enabled:
+
+```bash
+azure-functions-scaffold new my-api --preset strict --python-version 3.12 --github-actions
+```
+
 Create a new project in a specific destination:
 
 ```bash
@@ -59,6 +75,19 @@ List available templates:
 
 ```bash
 azure-functions-scaffold templates
+```
+
+List available presets:
+
+```bash
+azure-functions-scaffold presets
+```
+
+Add a new HTTP or timer function to an existing scaffolded project:
+
+```bash
+azure-functions-scaffold add http get-user --project-root ./my-api
+azure-functions-scaffold add timer cleanup --project-root ./my-api
 ```
 
 ## Generated Project
