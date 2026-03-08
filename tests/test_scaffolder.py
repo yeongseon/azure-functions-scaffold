@@ -24,6 +24,7 @@ from azure_functions_scaffold.template_registry import (
     list_presets,
     list_templates,
     validate_python_version,
+    validate_tooling,
 )
 
 
@@ -163,6 +164,24 @@ def test_get_preset_rejects_unknown_name() -> None:
 def test_validate_python_version_rejects_unsupported_version() -> None:
     with pytest.raises(ScaffoldError, match="Unsupported Python version"):
         validate_python_version("3.9")
+
+
+def test_validate_tooling_rejects_unknown_tool() -> None:
+    with pytest.raises(ScaffoldError, match="Unsupported tooling selection"):
+        validate_tooling(("ruff", "semgrep"))
+
+
+def test_build_project_options_marks_custom_tooling() -> None:
+    options = build_project_options(
+        preset_name="standard",
+        python_version="3.11",
+        include_github_actions=False,
+        initialize_git=False,
+        tooling=("ruff", "mypy"),
+    )
+
+    assert options.preset_name == "custom"
+    assert options.tooling == ("ruff", "mypy")
 
 
 def test_scaffold_project_can_initialize_git_repository(

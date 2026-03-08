@@ -43,6 +43,8 @@ Current context variables:
 - `include_mypy`
 - `include_pytest`
 
+`preset_name` may be `custom` when interactive tooling choices diverge from the selected preset defaults.
+
 ## HTTP Template Contract
 
 The HTTP template must generate:

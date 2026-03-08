@@ -7,6 +7,7 @@ from azure_functions_scaffold.models import PresetSpec, ProjectOptions, Template
 
 TEMPLATE_ROOT = Path(__file__).parent / "templates"
 SUPPORTED_PYTHON_VERSIONS = ("3.10", "3.11", "3.12", "3.13", "3.14")
+SUPPORTED_TOOLING = ("ruff", "mypy", "pytest")
 
 
 def list_templates() -> list[TemplateSpec]:
@@ -65,13 +66,16 @@ def build_project_options(
     python_version: str,
     include_github_actions: bool,
     initialize_git: bool,
+    tooling: tuple[str, ...] | None = None,
 ) -> ProjectOptions:
     preset = get_preset(preset_name)
     validate_python_version(python_version)
+    resolved_tooling = validate_tooling(tooling or preset.tooling)
+    resolved_preset_name = preset.name if resolved_tooling == preset.tooling else "custom"
     return ProjectOptions(
-        preset_name=preset.name,
+        preset_name=resolved_preset_name,
         python_version=python_version,
-        tooling=preset.tooling,
+        tooling=resolved_tooling,
         include_github_actions=include_github_actions,
         initialize_git=initialize_git,
     )
@@ -85,3 +89,15 @@ def validate_python_version(python_version: str) -> str:
             f"Unsupported Python version '{python_version}'. Supported versions: {available}"
         )
     return normalized_version
+
+
+def validate_tooling(tooling: tuple[str, ...]) -> tuple[str, ...]:
+    normalized = tuple(dict.fromkeys(item.strip().lower() for item in tooling if item.strip()))
+    invalid = [item for item in normalized if item not in SUPPORTED_TOOLING]
+    if invalid:
+        available = ", ".join(SUPPORTED_TOOLING)
+        invalid_list = ", ".join(invalid)
+        raise ScaffoldError(
+            f"Unsupported tooling selection '{invalid_list}'. Supported tooling: {available}"
+        )
+    return normalized

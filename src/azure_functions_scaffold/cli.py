@@ -12,6 +12,7 @@ from azure_functions_scaffold.models import ProjectOptions
 from azure_functions_scaffold.scaffolder import scaffold_project
 from azure_functions_scaffold.template_registry import (
     build_project_options,
+    get_preset,
     list_presets,
     list_templates,
 )
@@ -215,6 +216,8 @@ def _resolve_new_project_inputs(
             "Initialize git repository?",
             default=initialize_git,
         )
+        preset_spec = get_preset(resolved_preset)
+        resolved_tooling = _prompt_tooling_selection(preset_spec.tooling)
     else:
         if project_name is None:
             raise ScaffoldError("Project name is required unless --interactive is used.")
@@ -224,12 +227,30 @@ def _resolve_new_project_inputs(
         resolved_python_version = python_version
         resolved_include_github_actions = include_github_actions
         resolved_initialize_git = initialize_git
+        resolved_tooling = None
 
     options = build_project_options(
         preset_name=resolved_preset,
         python_version=resolved_python_version,
         include_github_actions=resolved_include_github_actions,
         initialize_git=resolved_initialize_git,
+        tooling=resolved_tooling,
     )
 
     return resolved_name, resolved_template, options
+
+
+def _prompt_tooling_selection(default_tooling: tuple[str, ...]) -> tuple[str, ...]:
+    selections: list[str] = []
+    prompts = [
+        ("ruff", "Include Ruff?"),
+        ("mypy", "Include mypy?"),
+        ("pytest", "Include pytest?"),
+    ]
+
+    typer.echo("Select tooling for the generated project:")
+    for tool_name, prompt in prompts:
+        if typer.confirm(prompt, default=tool_name in default_tooling):
+            selections.append(tool_name)
+
+    return tuple(selections)

@@ -67,7 +67,7 @@ Creates a new Azure Functions Python v2 project from the default HTTP template.
 `--interactive`, `-i`
 
 - optional
-- when enabled, prompts for project name, template, preset, Python version, GitHub Actions, and git initialization
+- when enabled, prompts for project name, template, preset, Python version, GitHub Actions, git initialization, and individual tooling selection
 
 ### Behavior
 
@@ -93,6 +93,7 @@ Result:
 
 - creates `./my-api`
 - renders all files from the embedded HTTP template
+- uses the chosen preset as a starting point, then applies interactive tooling overrides
 - optionally omits tests for the `minimal` preset
 - optionally includes `.github/workflows/ci.yml`
 - optionally initializes a git repository

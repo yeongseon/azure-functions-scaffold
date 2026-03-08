@@ -80,7 +80,7 @@ def test_new_command_supports_interactive_mode(tmp_path: Path) -> None:
     result = runner.invoke(
         app,
         ["new", "--destination", str(tmp_path), "--interactive"],
-        input="interactive-api\nhttp\nstrict\n3.12\ny\nn\n",
+        input="interactive-api\nhttp\nstrict\n3.12\ny\nn\ny\ny\ny\n",
     )
 
     assert result.exit_code == 0
@@ -89,6 +89,24 @@ def test_new_command_supports_interactive_mode(tmp_path: Path) -> None:
     assert (project_dir / ".github/workflows/ci.yml").exists()
     pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
     assert "mypy>=1.17.1" in pyproject_text
+
+
+def test_new_command_supports_interactive_custom_tooling(tmp_path: Path) -> None:
+    result = runner.invoke(
+        app,
+        ["new", "--destination", str(tmp_path), "--interactive"],
+        input="custom-api\nhttp\nstandard\n3.11\nn\nn\ny\ny\nn\n",
+    )
+
+    assert result.exit_code == 0
+    project_dir = tmp_path / "custom-api"
+    pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
+    readme_text = (project_dir / "README.md").read_text(encoding="utf-8")
+    assert "ruff>=0.11.0" in pyproject_text
+    assert "mypy>=1.17.1" in pyproject_text
+    assert "pytest" not in pyproject_text
+    assert "Preset: `custom`" in readme_text
+    assert not (project_dir / "tests").exists()
 
 
 def test_add_http_command_updates_existing_project(tmp_path: Path) -> None:

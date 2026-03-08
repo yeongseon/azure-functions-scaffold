@@ -21,6 +21,7 @@ Delivered:
 - interactive project setup
 - `minimal`, `standard`, and `strict` presets
 - richer template context for Python version and tooling choices
+- interactive tooling selection on top of preset defaults
 - optional generated GitHub Actions CI workflow
 - optional git initialization
 
