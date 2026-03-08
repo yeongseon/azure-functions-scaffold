@@ -131,10 +131,11 @@ make build
 
 - Full docs: [yeongseon.github.io/azure-functions-scaffold](https://yeongseon.github.io/azure-functions-scaffold/)
 - Root planning docs: `AGENT.md`, `DESIGN.md`, `PRD.md`
-- CLI guide: `docs/CLI.md`
-- Template spec: `docs/TEMPLATE_SPEC.md`
-- Style guide: `docs/STYLE_GUIDE.md`
-- Roadmap: `docs/ROADMAP.md`
+- Release history: `CHANGELOG.md`
+- CLI guide: `docs/cli.md`
+- Template spec: `docs/template_spec.md`
+- Style guide: `docs/style_guide.md`
+- Roadmap: `docs/roadmap.md`
 - Contributing guide: `CONTRIBUTING.md`
 
 ## License
