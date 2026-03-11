@@ -17,6 +17,7 @@ def scaffold_project(
     destination: Path,
     template_name: str = "http",
     options: ProjectOptions | None = None,
+    overwrite: bool = False,
 ) -> Path:
     resolved_options = options or build_project_options(
         preset_name="standard",
@@ -27,7 +28,11 @@ def scaffold_project(
     context = build_template_context(project_name, resolved_options)
     target_dir = resolve_target_dir(destination=destination, project_name=context.project_name)
     if target_dir.exists():
-        raise ScaffoldError(f"Target directory already exists: {target_dir}")
+        if not overwrite:
+            raise ScaffoldError(
+                f"Target directory already exists: {target_dir}. " "Use --overwrite to replace it."
+            )
+        shutil.rmtree(target_dir)
 
     template = get_template(template_name)
     template_root = template.root
@@ -76,6 +81,7 @@ def describe_scaffold_project(
     destination: Path,
     template_name: str = "http",
     options: ProjectOptions | None = None,
+    overwrite: bool = False,
 ) -> list[str]:
     resolved_options = options or build_project_options(
         preset_name="standard",
@@ -93,6 +99,11 @@ def describe_scaffold_project(
         f"Preset: {context.preset_name}",
         f"Python: {context.python_version}",
     ]
+    if target_dir.exists():
+        if overwrite:
+            lines.append("Overwrite: enabled")
+        else:
+            lines.append("Overwrite: blocked (target already exists)")
     if context.include_github_actions:
         lines.append("GitHub Actions: enabled")
     if context.initialize_git:

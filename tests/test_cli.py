@@ -92,7 +92,22 @@ def test_new_command_fails_when_target_exists(tmp_path: Path) -> None:
     result = runner.invoke(app, ["new", "my-api", "--destination", str(tmp_path)])
 
     assert result.exit_code == 1
-    assert "Target directory already exists" in result.stdout
+    assert "Use --overwrite to replace it" in result.stdout
+
+
+def test_new_command_supports_overwrite(tmp_path: Path) -> None:
+    project_dir = tmp_path / "my-api"
+    project_dir.mkdir()
+    (project_dir / "stale.txt").write_text("stale", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        ["new", "my-api", "--destination", str(tmp_path), "--overwrite"],
+    )
+
+    assert result.exit_code == 0
+    assert not (project_dir / "stale.txt").exists()
+    assert (project_dir / "function_app.py").exists()
 
 
 def test_new_command_rejects_unknown_template(tmp_path: Path) -> None:
@@ -127,6 +142,30 @@ def test_new_command_supports_dry_run(tmp_path: Path) -> None:
     assert "Preset: strict" in result.stdout
     assert "app/functions/queue.py" in result.stdout
     assert not (tmp_path / "preview-api").exists()
+
+
+def test_new_command_dry_run_reports_existing_target_without_overwrite(tmp_path: Path) -> None:
+    (tmp_path / "preview-api").mkdir()
+
+    result = runner.invoke(
+        app,
+        ["new", "preview-api", "--destination", str(tmp_path), "--dry-run"],
+    )
+
+    assert result.exit_code == 0
+    assert "Overwrite: blocked (target already exists)" in result.stdout
+
+
+def test_new_command_dry_run_reports_overwrite_enabled(tmp_path: Path) -> None:
+    (tmp_path / "preview-api").mkdir()
+
+    result = runner.invoke(
+        app,
+        ["new", "preview-api", "--destination", str(tmp_path), "--dry-run", "--overwrite"],
+    )
+
+    assert result.exit_code == 0
+    assert "Overwrite: enabled" in result.stdout
 
 
 def test_new_command_supports_minimal_preset(tmp_path: Path) -> None:

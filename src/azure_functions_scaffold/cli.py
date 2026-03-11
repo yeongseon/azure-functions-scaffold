@@ -122,6 +122,13 @@ def new_project(
             help="Preview the generated project without writing files.",
         ),
     ] = False,
+    overwrite: Annotated[
+        bool,
+        typer.Option(
+            "--overwrite",
+            help="Replace an existing target directory before generating the project.",
+        ),
+    ] = False,
 ) -> None:
     """Create a new Azure Functions Python v2 scaffold."""
     try:
@@ -140,6 +147,7 @@ def new_project(
                 destination=destination,
                 template_name=resolved_template,
                 options=resolved_options,
+                overwrite=overwrite,
             ):
                 typer.echo(line)
             return
@@ -148,6 +156,7 @@ def new_project(
             destination=destination,
             template_name=resolved_template,
             options=resolved_options,
+            overwrite=overwrite,
         )
     except ScaffoldError as exc:
         typer.secho(str(exc), fg=typer.colors.RED)

@@ -148,8 +148,21 @@ def test_scaffold_project_rejects_existing_target(tmp_path: Path) -> None:
     target_dir = tmp_path / "sample"
     target_dir.mkdir()
 
-    with pytest.raises(ScaffoldError, match="Target directory already exists"):
+    with pytest.raises(ScaffoldError, match="Use --overwrite to replace it"):
         scaffold_project("sample", tmp_path)
+
+
+def test_scaffold_project_can_overwrite_existing_target(tmp_path: Path) -> None:
+    target_dir = tmp_path / "sample"
+    target_dir.mkdir()
+    stale_file = target_dir / "stale.txt"
+    stale_file.write_text("stale", encoding="utf-8")
+
+    project_path = scaffold_project("sample", tmp_path, overwrite=True)
+
+    assert project_path == target_dir
+    assert not stale_file.exists()
+    assert (project_path / "function_app.py").exists()
 
 
 def test_describe_scaffold_project_reports_expected_files(tmp_path: Path) -> None:
@@ -173,6 +186,17 @@ def test_describe_scaffold_project_reports_expected_files(tmp_path: Path) -> Non
     assert "  - function_app.py" in lines
     assert "  - app/functions/queue.py" in lines
     assert "  - .github/workflows/ci.yml" in lines
+
+
+def test_describe_scaffold_project_reports_overwrite_status(tmp_path: Path) -> None:
+    target_dir = tmp_path / "sample"
+    target_dir.mkdir()
+
+    blocked_lines = describe_scaffold_project("sample", tmp_path)
+    overwrite_lines = describe_scaffold_project("sample", tmp_path, overwrite=True)
+
+    assert "Overwrite: blocked (target already exists)" in blocked_lines
+    assert "Overwrite: enabled" in overwrite_lines
 
 
 def test_scaffold_project_renders_template_option(tmp_path: Path) -> None:

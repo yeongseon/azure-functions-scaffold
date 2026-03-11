@@ -96,6 +96,12 @@ Preview a generated project without writing files:
 azure-functions-scaffold new my-api --template queue --preset strict --dry-run
 ```
 
+Replace an existing scaffolded project explicitly:
+
+```bash
+azure-functions-scaffold new my-api --overwrite
+```
+
 Create a strict project with GitHub Actions enabled:
 
 ```bash

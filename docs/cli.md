@@ -76,6 +76,11 @@ Creates a new Azure Functions Python v2 project from one of the built-in simple 
 - optional
 - previews the generated project without writing files
 
+`--overwrite`
+
+- optional
+- removes an existing target directory before rendering the new project
+
 ### Behavior
 
 Example:
@@ -126,6 +131,12 @@ Dry-run example:
 azure-functions-scaffold new my-api --template queue --preset strict --dry-run
 ```
 
+Overwrite example:
+
+```bash
+azure-functions-scaffold new my-api --overwrite
+```
+
 Result:
 
 - creates `./my-api`
@@ -135,6 +146,7 @@ Result:
 - optionally includes `.github/workflows/ci.yml`
 - optionally initializes a git repository
 - supports dry-run previews of the target directory and rendered file set
+- only replaces an existing target directory when `--overwrite` is provided
 - prints `Created project at <path>`
 
 ## `add`
