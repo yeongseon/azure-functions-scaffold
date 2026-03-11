@@ -48,6 +48,7 @@ Delivered:
 - queue-focused project template
 - blob-focused project template
 - service bus-focused project template
+- generated-project smoke coverage across all simple trigger templates
 
 Planned:
 

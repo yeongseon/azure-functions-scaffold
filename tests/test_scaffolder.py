@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 import pytest
 
@@ -330,30 +331,7 @@ def test_initialize_git_repository_rejects_missing_git(
         _initialize_git_repository(tmp_path)
 
 
-@pytest.mark.parametrize(
-    ("template_name", "preset_name"),
-    [
-        ("http", "strict"),
-        ("queue", "standard"),
-    ],
-)
-def test_representative_scaffold_output_passes_generated_checks(
-    tmp_path: Path,
-    template_name: str,
-    preset_name: str,
-) -> None:
-    project_path = scaffold_project(
-        f"{template_name}-e2e",
-        tmp_path,
-        template_name=template_name,
-        options=build_project_options(
-            preset_name=preset_name,
-            python_version="3.10",
-            include_github_actions=False,
-            initialize_git=False,
-        ),
-    )
-
+def _run_generated_project_checks(project_path: Path) -> None:
     subprocess.run(
         ["make", "install"],
         cwd=project_path,
@@ -368,3 +346,37 @@ def test_representative_scaffold_output_passes_generated_checks(
         capture_output=True,
         text=True,
     )
+
+
+def _current_python_minor() -> str:
+    return f"{sys.version_info.major}.{sys.version_info.minor}"
+
+
+@pytest.mark.parametrize(
+    ("template_name", "preset_name"),
+    [
+        ("http", "strict"),
+        ("timer", "standard"),
+        ("queue", "standard"),
+        ("blob", "standard"),
+        ("servicebus", "standard"),
+    ],
+)
+def test_simple_trigger_templates_pass_generated_checks(
+    tmp_path: Path,
+    template_name: str,
+    preset_name: str,
+) -> None:
+    project_path = scaffold_project(
+        f"{template_name}-e2e",
+        tmp_path,
+        template_name=template_name,
+        options=build_project_options(
+            preset_name=preset_name,
+            python_version=_current_python_minor(),
+            include_github_actions=False,
+            initialize_git=False,
+        ),
+    )
+
+    _run_generated_project_checks(project_path)
