@@ -187,6 +187,21 @@ def test_new_command_supports_interactive_custom_tooling(tmp_path: Path) -> None
     assert not (project_dir / "tests").exists()
 
 
+def test_new_command_reprompts_invalid_interactive_choices(tmp_path: Path) -> None:
+    result = runner.invoke(
+        app,
+        ["new", "--destination", str(tmp_path), "--interactive"],
+        input="\ninvalid-template\nhttp\ninvalid-preset\nstandard\n3.9\n3.12\nn\nn\ny\nn\ny\n",
+    )
+
+    assert result.exit_code == 0
+    project_dir = tmp_path / "my-api"
+    assert project_dir.exists()
+    assert "Unsupported template 'invalid-template'" in result.stdout
+    assert "Unsupported preset 'invalid-preset'" in result.stdout
+    assert "Unsupported Python version '3.9'" in result.stdout
+
+
 def test_add_http_command_updates_existing_project(tmp_path: Path) -> None:
     create_result = runner.invoke(app, ["new", "my-api", "--destination", str(tmp_path)])
     assert create_result.exit_code == 0

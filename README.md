@@ -87,6 +87,9 @@ Create a project interactively:
 azure-functions-scaffold new --interactive
 ```
 
+Interactive prompts validate project names, templates, presets, and Python versions before
+continuing, so mistakes are caught at the prompt instead of failing later in the generation flow.
+
 Preview a generated project without writing files:
 
 ```bash

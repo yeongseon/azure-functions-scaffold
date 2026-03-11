@@ -69,6 +69,7 @@ Creates a new Azure Functions Python v2 project from one of the built-in simple 
 
 - optional
 - when enabled, prompts for project name, template, preset, Python version, GitHub Actions, git initialization, and individual tooling selection
+- invalid project names, templates, presets, and Python versions are rejected at the prompt and re-requested immediately
 
 `--dry-run`
 

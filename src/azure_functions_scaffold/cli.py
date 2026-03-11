@@ -16,12 +16,14 @@ from azure_functions_scaffold.models import ProjectOptions
 from azure_functions_scaffold.scaffolder import (
     describe_scaffold_project,
     scaffold_project,
+    validate_project_name,
 )
 from azure_functions_scaffold.template_registry import (
     build_project_options,
     get_preset,
     list_presets,
     list_templates,
+    validate_python_version,
 )
 
 app = typer.Typer(
@@ -239,13 +241,18 @@ def _resolve_new_project_inputs(
     interactive: bool,
 ) -> tuple[str, str, ProjectOptions]:
     if interactive:
-        resolved_name = typer.prompt("Project name", default=project_name or "my-api").strip()
-        resolved_template = typer.prompt("Template", default=template).strip().lower()
-        resolved_preset = typer.prompt("Preset", default=preset).strip().lower()
-        resolved_python_version = typer.prompt(
-            "Python version",
-            default=python_version,
-        ).strip()
+        resolved_name = _prompt_project_name(project_name or "my-api")
+        resolved_template = _prompt_choice(
+            label="Template",
+            default=template,
+            choices=tuple(template_spec.name for template_spec in list_templates()),
+        )
+        resolved_preset = _prompt_choice(
+            label="Preset",
+            default=preset,
+            choices=tuple(preset_spec.name for preset_spec in list_presets()),
+        )
+        resolved_python_version = _prompt_python_version(python_version)
         resolved_include_github_actions = typer.confirm(
             "Include GitHub Actions?",
             default=include_github_actions,
@@ -292,3 +299,33 @@ def _prompt_tooling_selection(default_tooling: tuple[str, ...]) -> tuple[str, ..
             selections.append(tool_name)
 
     return tuple(selections)
+
+
+def _prompt_project_name(default: str) -> str:
+    while True:
+        candidate = str(typer.prompt("Project name", default=default)).strip()
+        try:
+            return validate_project_name(candidate)
+        except ScaffoldError as exc:
+            typer.secho(str(exc), fg=typer.colors.YELLOW)
+
+
+def _prompt_choice(*, label: str, default: str, choices: tuple[str, ...]) -> str:
+    available = ", ".join(choices)
+    while True:
+        candidate = str(typer.prompt(label, default=default)).strip().lower()
+        if candidate in choices:
+            return candidate
+        typer.secho(
+            f"Unsupported {label.lower()} '{candidate}'. Choose one of: {available}",
+            fg=typer.colors.YELLOW,
+        )
+
+
+def _prompt_python_version(default: str) -> str:
+    while True:
+        candidate = str(typer.prompt("Python version", default=default)).strip()
+        try:
+            return validate_python_version(candidate)
+        except ScaffoldError as exc:
+            typer.secho(str(exc), fg=typer.colors.YELLOW)
