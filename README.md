@@ -32,6 +32,7 @@ This project does **not** support the legacy `function.json`-based Python v1 pro
 - `azure-functions-scaffold new <project-name> --with-openapi` — include OpenAPI docs (Swagger UI, JSON, YAML)
 - `azure-functions-scaffold new <project-name> --with-validation` — include request/response validation
 - `azure-functions-scaffold new <project-name> --with-openapi --with-validation` — both features combined
+- `azure-functions-scaffold new <project-name> --with-doctor` — include azure-functions-doctor health checks
 - `azure-functions-scaffold add http <function-name>`
 - `azure-functions-scaffold add timer <function-name>`
 - `azure-functions-scaffold add queue <function-name>`
@@ -126,6 +127,12 @@ Create an HTTP project with both OpenAPI and validation:
 azure-functions-scaffold new my-api --with-openapi --with-validation
 ```
 
+Create a project with azure-functions-doctor health checks:
+
+```bash
+azure-functions-scaffold new my-api --with-doctor
+```
+
 Create a strict project with GitHub Actions enabled:
 
 ```bash
@@ -206,6 +213,11 @@ When `--with-openapi` is used, three additional endpoints are registered:
 When `--with-validation` is used, the hello endpoint switches to POST with
 Pydantic request/response models (`HelloRequest`, `HelloResponse`).
 
+When `--with-doctor` is used, a `make doctor` target is added to the generated
+Makefile and `azure-functions-doctor` is included as a project dependency.
+
+All generated projects include `azure-functions-logging` for structured JSON
+logging via `setup_logging(format="json")` and `get_logger()`.
 ## Development
 
 Use Makefile commands as the canonical entry points:

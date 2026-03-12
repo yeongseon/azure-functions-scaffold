@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-03-12
+
+### Added
+
+- `--with-doctor` / `--no-doctor` flag for `new` command to include `azure-functions-doctor` health checks
+- Interactive prompt for doctor inclusion
+- Conditional `make doctor` target in generated Makefile when doctor is enabled
+- `azure-functions-logging>=0.2.0` as default dependency across all templates
+- Structured JSON logging via `setup_logging(format="json")` and `get_logger()` in generated `logging.py`
+- Non-HTTP function templates now use `logging.info()` instead of `print()`
+- Dry-run output reports "Doctor: enabled" when `--with-doctor` is set
+- New test coverage for doctor flag, dry-run, and logging dependency
+
+### Changed
+
+- Generated `logging.py` replaced `basicConfig` stub with `azure-functions-logging` integration
+- Queue, blob, and Service Bus function templates use lazy `%s` format strings for logging
 ## [0.2.0] - 2026-03-12
 
 ### Added

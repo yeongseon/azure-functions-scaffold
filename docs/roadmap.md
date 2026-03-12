@@ -56,20 +56,26 @@ Planned:
 
 ## Phase 5: CLI Expansion
 
-Planned:
+Status: implemented
 
-- dry-run mode
-- overwrite protections with clearer UX
+Delivered:
+
+- dry-run mode for `new` and `add` commands
+- overwrite protections with `--overwrite` flag
 - finer interactive tooling selection beyond presets
 
 ## Phase 6: Product Expansion
 
-Potential:
+Status: implemented
 
-- CI/CD starter files
-- OpenAPI-ready HTTP variants
-- validation-oriented project variants
+Delivered:
 
+- `--with-openapi` / `--no-openapi` flag for OpenAPI documentation (HTTP template)
+- `--with-validation` / `--no-validation` flag for request validation (HTTP template)
+- `--with-doctor` / `--no-doctor` flag for `azure-functions-doctor` health checks
+- `azure-functions-logging` integration across all templates (structured JSON logging)
+- Conditional `make doctor` target in generated projects
+- Non-HTTP function templates use `logging.info()` instead of `print()`
 ## Out of Scope for Near Term
 
 - telemetry frameworks
