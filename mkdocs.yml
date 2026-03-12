@@ -12,10 +12,14 @@ theme:
 
 nav:
   - Home: index.md
+  - Installation: installation.md
   - CLI: cli.md
   - Template Spec: template_spec.md
   - Style Guide: style_guide.md
   - Architecture: architecture.md
+  - Development: development.md
+  - Testing: testing.md
+  - Troubleshooting: troubleshooting.md
   - Roadmap: roadmap.md
   - Security: security.md
   - Changelog: changelog.md
@@ -33,7 +37,6 @@ markdown_extensions:
   - pymdownx.tabbed
   - pymdownx.details
   - pymdownx.inlinehilite
-  - pymdownx.emoji
 
 plugins:
   - search
