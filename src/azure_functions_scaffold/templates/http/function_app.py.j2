@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import azure.functions as func
+{%- if include_openapi %}
+from azure_functions_openapi.openapi import get_openapi_json, get_openapi_yaml
+from azure_functions_openapi.swagger_ui import render_swagger_ui
+{%- endif %}
 
 from app.core.logging import configure_logging
 from app.functions.http import http_blueprint
-{% if include_openapi %}
-from azure_functions_openapi.openapi import get_openapi_json, get_openapi_yaml
-from azure_functions_openapi.swagger_ui import render_swagger_ui
-{% endif %}
 
 configure_logging()
 
 app = func.FunctionApp()
 app.register_functions(http_blueprint)
-{% if include_openapi %}
+{%- if include_openapi %}
 
 
 @app.route(route="openapi.json", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
@@ -38,4 +38,4 @@ def swagger_ui(req: func.HttpRequest) -> func.HttpResponse:
         body=render_swagger_ui(openapi_url="/api/openapi.json"),
         mimetype="text/html",
     )
-{% endif %}
+{%- endif %}
