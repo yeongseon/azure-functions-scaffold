@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import azure.functions as func
 
 from app.services.servicebus_service import decode_servicebus_message
@@ -14,4 +16,4 @@ servicebus_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
 )
 def process_servicebus_message(message: func.ServiceBusMessage) -> None:
     payload = decode_servicebus_message(message)
-    print(f"Processed Service Bus message: {payload}")
+    logging.info("Processed Service Bus message: %s", payload)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import azure.functions as func
 
 from app.services.queue_service import decode_queue_message
@@ -14,4 +16,4 @@ queue_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
 )
 def process_queue_message(message: func.QueueMessage) -> None:
     payload = decode_queue_message(message)
-    print(f"Processed queue message: {payload}")
+    logging.info("Processed queue message: %s", payload)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import azure.functions as func
 
 from app.services.blob_service import describe_blob
@@ -13,4 +15,4 @@ blob_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
     connection="AzureWebJobsStorage",
 )
 def process_blob(blob: func.InputStream) -> None:
-    print(describe_blob(blob))
+    logging.info(describe_blob(blob))
