@@ -58,3 +58,9 @@ endif
 ifeq ($(INCLUDE_RUFF)$(INCLUDE_MYPY)$(INCLUDE_PYTEST),000)
 	@echo "No extra quality tooling is enabled for the {{ preset_name }} preset."
 endif
+
+{% if include_doctor -%}
+.PHONY: doctor
+doctor:
+	$(PYTHON) -m azure_functions_doctor check .
+{% endif -%}

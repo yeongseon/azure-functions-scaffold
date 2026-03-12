@@ -18,7 +18,7 @@ class TemplateContext:
     include_pytest: bool
     include_openapi: bool
     include_validation: bool
-
+    include_doctor: bool
 
 @dataclass(frozen=True)
 class TemplateSpec:
@@ -43,3 +43,4 @@ class ProjectOptions:
     initialize_git: bool
     include_openapi: bool
     include_validation: bool
+    include_doctor: bool

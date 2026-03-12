@@ -66,6 +66,7 @@ def scaffold_project(
             include_pytest=context.include_pytest,
             include_openapi=context.include_openapi,
             include_validation=context.include_validation,
+            include_doctor=context.include_doctor,
         )
         output_path.write_text(rendered_content, encoding="utf-8")
 
@@ -108,6 +109,8 @@ def describe_scaffold_project(
         lines.append("OpenAPI: enabled")
     if context.include_validation:
         lines.append("Validation: enabled")
+    if context.include_doctor:
+        lines.append("Doctor: enabled")
 
     lines.append("Files:")
     for template_path in _iter_template_files(template.root):
@@ -136,6 +139,7 @@ def build_template_context(project_name: str, options: ProjectOptions) -> Templa
         include_pytest="pytest" in options.tooling,
         include_openapi=options.include_openapi,
         include_validation=options.include_validation,
+        include_doctor=options.include_doctor,
     )
 
 

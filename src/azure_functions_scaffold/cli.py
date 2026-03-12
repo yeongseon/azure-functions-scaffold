@@ -121,6 +121,13 @@ def new_project(
             help="Include request validation support (HTTP template only).",
         ),
     ] = False,
+    with_doctor: Annotated[
+        bool,
+        typer.Option(
+            "--with-doctor/--no-doctor",
+            help="Include azure-functions-doctor health checks.",
+        ),
+    ] = False,
     interactive: Annotated[
         bool,
         typer.Option(
@@ -155,6 +162,7 @@ def new_project(
             initialize_git=initialize_git,
             include_openapi=with_openapi,
             include_validation=with_validation,
+            include_doctor=with_doctor,
             interactive=interactive or project_name is None,
         )
         if dry_run:
@@ -265,6 +273,7 @@ def _resolve_new_project_inputs(
     initialize_git: bool,
     include_openapi: bool,
     include_validation: bool,
+    include_doctor: bool,
     interactive: bool,
 ) -> tuple[str, str, ProjectOptions]:
     if interactive:
@@ -298,6 +307,10 @@ def _resolve_new_project_inputs(
             "Include request validation? (HTTP template only)",
             default=include_validation,
         )
+        resolved_include_doctor = typer.confirm(
+            "Include azure-functions-doctor health checks?",
+            default=include_doctor,
+        )
     else:
         if project_name is None:
             raise ScaffoldError("Project name is required unless --interactive is used.")
@@ -310,6 +323,7 @@ def _resolve_new_project_inputs(
         resolved_tooling = None
         resolved_include_openapi = include_openapi
         resolved_include_validation = include_validation
+        resolved_include_doctor = include_doctor
 
     options = build_project_options(
         preset_name=resolved_preset,
@@ -319,8 +333,8 @@ def _resolve_new_project_inputs(
         tooling=resolved_tooling,
         include_openapi=resolved_include_openapi,
         include_validation=resolved_include_validation,
+        include_doctor=resolved_include_doctor,
     )
-
     return resolved_name, resolved_template, options
 
 
