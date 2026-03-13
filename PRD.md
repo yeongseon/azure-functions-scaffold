@@ -59,3 +59,59 @@ Without a scaffold, each team reinvents these decisions and quality drifts acros
 - Generated projects pass their own lint and test checks
 - Representative scaffold output remains smoke-tested in CI
 - The CLI stays simple enough to understand without external scaffolding systems
+
+## Example-First Design
+
+### Philosophy
+
+A scaffolding CLI is only as good as the projects it generates. `azure-functions-scaffold`
+treats every generated project as a runnable example — if a developer cannot go from
+`pip install` to `func start` with a working endpoint in under two minutes, the scaffold
+has failed its purpose.
+
+### Quick Start (Hello World)
+
+The shortest path from zero to a running Azure Function:
+
+```bash
+pip install azure-functions-scaffold
+azure-functions-scaffold new my-api
+cd my-api
+pip install -e .
+func start
+```
+
+Open `http://localhost:7071/api/hello` and get:
+
+```text
+Hello, World!
+```
+
+Every template (HTTP, timer, queue, blob, Service Bus) produces a project that runs
+out of the box with zero manual configuration.
+
+### Why Examples Matter
+
+1. **Lower entry barrier.** The generated project IS the example. A developer evaluates the
+   scaffold by running the output, not by reading documentation.
+2. **AI agent discoverability.** Tools like GitHub Copilot, Cursor, and Claude Code recommend
+   libraries based on README, PRD, and example content. Clear CLI usage patterns and
+   generated output help AI agents suggest `azure-functions-scaffold` for project setup prompts.
+3. **Cookbook role.** For niche ecosystems, generated project templates serve as the primary
+   reference architecture. Each template teaches real project structure, not toy examples.
+4. **Proven approach.** FastAPI, LangChain, SQLAlchemy, and Pandas all achieved early adoption
+   through extensive, copy-paste-friendly examples. Scaffold takes this further — the entire
+   output is a production-leaning example.
+
+### Template Inventory
+
+| Template | Command | Use Case |
+|---|---|---|
+| HTTP | `scaffold new my-api` | REST APIs, webhooks |
+| Timer | `scaffold new my-job --template timer` | Scheduled tasks, cron |
+| Queue | `scaffold new my-worker --template queue` | Message processing (Azurite) |
+| Blob | `scaffold new my-blob --template blob` | File processing (Azurite) |
+| Service Bus | `scaffold new my-bus --template servicebus` | Enterprise messaging |
+
+All generated projects pass their own lint and test checks in CI. New templates must
+produce output that works out of the box without manual intervention.
