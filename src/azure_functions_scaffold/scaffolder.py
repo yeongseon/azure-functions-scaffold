@@ -28,7 +28,7 @@ def scaffold_project(
     if target_dir.exists():
         if not overwrite:
             raise ScaffoldError(
-                f"Target directory already exists: {target_dir}. " "Use --overwrite to replace it."
+                f"Target directory already exists: {target_dir}. Use --overwrite to replace it."
             )
         shutil.rmtree(target_dir)
 

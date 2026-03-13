@@ -279,7 +279,7 @@ def test_new_command_with_validation_flag(tmp_path: Path) -> None:
     assert "pydantic>=2.0.0" in pyproject_text
     assert "azure-functions-openapi" not in pyproject_text
     assert "@validate_http(" in http_text
-    assert "methods=[\"POST\"]" in http_text
+    assert 'methods=["POST"]' in http_text
     assert "class HelloRequest(BaseModel):" in models_text
     assert "class HelloResponse(BaseModel):" in models_text
 
@@ -421,6 +421,7 @@ def test_new_command_dry_run_reports_doctor(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert "Doctor: enabled" in result.stdout
     assert not (tmp_path / "dry-api").exists()
+
 
 def test_add_http_command_updates_existing_project(tmp_path: Path) -> None:
     create_result = runner.invoke(app, ["new", "my-api", "--destination", str(tmp_path)])

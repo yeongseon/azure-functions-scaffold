@@ -20,6 +20,7 @@ class TemplateContext:
     include_validation: bool
     include_doctor: bool
 
+
 @dataclass(frozen=True)
 class TemplateSpec:
     name: str
