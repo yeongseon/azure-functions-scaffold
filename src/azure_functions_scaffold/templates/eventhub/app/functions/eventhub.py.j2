@@ -1,0 +1,19 @@
+from __future__ import annotations
+
+import logging
+
+import azure.functions as func
+
+from app.services.eventhub_service import decode_event
+
+eventhub_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@eventhub_blueprint.event_hub_message_trigger(
+    arg_name="event",
+    event_hub_name="my-event-hub",
+    connection="EventHubConnection",
+)
+def process_event(event: func.EventHubEvent) -> None:
+    payload = decode_event(event)
+    logging.info("Processed Event Hub message: %s", payload)

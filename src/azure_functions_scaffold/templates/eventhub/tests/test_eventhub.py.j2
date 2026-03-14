@@ -1,0 +1,11 @@
+from __future__ import annotations
+
+from types import SimpleNamespace
+
+from app.functions.eventhub import process_event
+
+
+def test_process_event_runs_without_error() -> None:
+    event = SimpleNamespace(get_body=lambda: b"hello from event hub")
+
+    process_event(event)
