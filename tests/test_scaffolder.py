@@ -40,13 +40,17 @@ def test_list_templates_returns_http_template() -> None:
         "queue",
         "blob",
         "servicebus",
+        "eventhub",
+        "cosmosdb",
+        "durable",
+        "ai",
     ]
     assert all(template.root.is_dir() for template in templates)
 
 
 def test_get_template_rejects_unknown_name() -> None:
     with pytest.raises(ScaffoldError, match="Unknown template"):
-        get_template("durable")
+        get_template("graphql")
 
 
 @pytest.mark.parametrize(
@@ -220,6 +224,10 @@ def test_scaffold_project_renders_template_option(tmp_path: Path) -> None:
         ("queue", "app/functions/queue.py", "app/services/queue_service.py"),
         ("blob", "app/functions/blob.py", "app/services/blob_service.py"),
         ("servicebus", "app/functions/servicebus.py", "app/services/servicebus_service.py"),
+        ("eventhub", "app/functions/eventhub.py", "app/services/eventhub_service.py"),
+        ("cosmosdb", "app/functions/cosmosdb.py", "app/services/cosmosdb_service.py"),
+        ("durable", "app/functions/durable.py", "app/services/durable_service.py"),
+        ("ai", "app/functions/ai.py", "app/services/ai_service.py"),
     ],
 )
 def test_scaffold_project_generates_expected_project_contract(
@@ -258,7 +266,7 @@ def test_scaffold_project_generates_expected_project_contract(
     assert "azure-functions-logging>=0.2.0" in pyproject_text
 
 
-@pytest.mark.parametrize("template_name", ["queue", "blob", "servicebus"])
+@pytest.mark.parametrize("template_name", ["queue", "blob", "servicebus", "eventhub", "cosmosdb"])
 def test_binding_templates_include_extension_bundle(tmp_path: Path, template_name: str) -> None:
     project_path = scaffold_project(
         f"{template_name}-sample",
@@ -286,6 +294,10 @@ def test_scaffold_project_renders_timer_template_option(tmp_path: Path) -> None:
         ("queue", "app/functions/queue.py", "tests/test_queue.py"),
         ("blob", "app/functions/blob.py", "tests/test_blob.py"),
         ("servicebus", "app/functions/servicebus.py", "tests/test_servicebus.py"),
+        ("eventhub", "app/functions/eventhub.py", "tests/test_eventhub.py"),
+        ("cosmosdb", "app/functions/cosmosdb.py", "tests/test_cosmosdb.py"),
+        ("durable", "app/functions/durable.py", "tests/test_durable.py"),
+        ("ai", "app/functions/ai.py", "tests/test_ai.py"),
     ],
 )
 def test_scaffold_project_renders_additional_trigger_templates(
@@ -415,6 +427,10 @@ def _current_python_minor() -> str:
         ("queue", "standard"),
         ("blob", "standard"),
         ("servicebus", "standard"),
+        ("eventhub", "standard"),
+        ("cosmosdb", "standard"),
+        ("durable", "standard"),
+        ("ai", "standard"),
     ],
 )
 def test_simple_trigger_templates_pass_generated_checks(

@@ -56,6 +56,30 @@ def test_new_command_creates_timer_project(tmp_path: Path) -> None:
             "tests/test_servicebus.py",
             "servicebus_blueprint",
         ),
+        (
+            "eventhub",
+            "app/functions/eventhub.py",
+            "tests/test_eventhub.py",
+            "eventhub_blueprint",
+        ),
+        (
+            "cosmosdb",
+            "app/functions/cosmosdb.py",
+            "tests/test_cosmosdb.py",
+            "cosmosdb_blueprint",
+        ),
+        (
+            "durable",
+            "app/functions/durable.py",
+            "tests/test_durable.py",
+            "durable_blueprint",
+        ),
+        (
+            "ai",
+            "app/functions/ai.py",
+            "tests/test_ai.py",
+            "ai_blueprint",
+        ),
     ],
 )
 def test_new_command_creates_additional_trigger_projects(
@@ -114,11 +138,11 @@ def test_new_command_supports_overwrite(tmp_path: Path) -> None:
 def test_new_command_rejects_unknown_template(tmp_path: Path) -> None:
     result = runner.invoke(
         app,
-        ["new", "my-api", "--destination", str(tmp_path), "--template", "durable"],
+        ["new", "my-api", "--destination", str(tmp_path), "--template", "graphql"],
     )
 
     assert result.exit_code == 1
-    assert "Unknown template 'durable'" in result.stdout
+    assert "Unknown template 'graphql'" in result.stdout
 
 
 def test_new_command_supports_dry_run(tmp_path: Path) -> None:
@@ -487,11 +511,11 @@ def test_add_command_rejects_invalid_trigger(tmp_path: Path) -> None:
 
     result = runner.invoke(
         app,
-        ["add", "durable", "sync-data", "--project-root", str(tmp_path / "my-api")],
+        ["add", "graphql", "sync-data", "--project-root", str(tmp_path / "my-api")],
     )
 
     assert result.exit_code == 1
-    assert "Unsupported trigger 'durable'" in result.stdout
+    assert "Unsupported trigger 'graphql'" in result.stdout
 
 
 @pytest.mark.parametrize(
@@ -500,6 +524,10 @@ def test_add_command_rejects_invalid_trigger(tmp_path: Path) -> None:
         ("queue", "sync-data"),
         ("blob", "ingest-reports"),
         ("servicebus", "process-events"),
+        ("eventhub", "listen-events"),
+        ("cosmosdb", "track-changes"),
+        ("durable", "orchestrate-flow"),
+        ("ai", "ask-question"),
     ],
 )
 def test_add_additional_trigger_commands_update_existing_project(
@@ -550,6 +578,10 @@ def test_templates_command_lists_available_templates() -> None:
     assert "queue: Queue-trigger Azure Functions Python v2 application." in result.stdout
     assert "blob: Blob-trigger Azure Functions Python v2 application." in result.stdout
     assert "servicebus: Service Bus-trigger Azure Functions Python v2 application." in result.stdout
+    assert "eventhub: EventHub-trigger Azure Functions Python v2 application." in result.stdout
+    assert "cosmosdb: CosmosDB-trigger Azure Functions Python v2 application." in result.stdout
+    assert "durable: Durable Functions Azure Functions Python v2 application." in result.stdout
+    assert "ai: AI/Azure OpenAI Azure Functions Python v2 application." in result.stdout
 
 
 def test_version_option_prints_package_version() -> None:

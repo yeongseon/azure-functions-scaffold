@@ -1,0 +1,7 @@
+from __future__ import annotations
+
+import azure.functions as func
+
+
+def describe_documents(documents: func.DocumentList) -> int:
+    return len(documents)

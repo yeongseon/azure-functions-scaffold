@@ -83,10 +83,14 @@ def describe_add_function(
         ]
     )
 
-    if normalized_trigger in {"queue", "blob", "servicebus"}:
+    if normalized_trigger in {"queue", "blob", "servicebus", "eventhub", "cosmosdb"}:
         lines.append("  - host.json extensionBundle")
     if normalized_trigger == "servicebus":
         lines.append("  - local.settings.json.example ServiceBusConnection")
+    if normalized_trigger == "eventhub":
+        lines.append("  - local.settings.json.example EventHubConnection")
+    if normalized_trigger == "cosmosdb":
+        lines.append("  - local.settings.json.example CosmosDBConnection")
 
     return lines
 
@@ -293,6 +297,130 @@ def {function_name}(message: func.ServiceBusMessage) -> None:
     logging.info("Service Bus trigger '{function_name}' processed: %s", body)
 """
 
+    if trigger == "eventhub":
+        return f"""from __future__ import annotations
+
+import logging
+
+import azure.functions as func
+
+{function_name}_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@{function_name}_blueprint.event_hub_message_trigger(
+    arg_name="event",
+    event_hub_name="my-event-hub",
+    connection="EventHubConnection",
+)
+def {function_name}(event: func.EventHubEvent) -> None:
+    payload = event.get_body().decode("utf-8")
+    logging.info("EventHub trigger '{function_name}' processed: %s", payload)
+"""
+
+    if trigger == "cosmosdb":
+        return f"""from __future__ import annotations
+
+import logging
+
+import azure.functions as func
+
+{function_name}_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@{function_name}_blueprint.cosmos_db_trigger_v3(
+    arg_name="documents",
+    container_name="my-container",
+    database_name="my-database",
+    connection="CosmosDBConnection",
+    lease_container_name="leases",
+    create_lease_container_if_not_exists=True,
+)
+def {function_name}(documents: func.DocumentList) -> None:
+    logging.info("CosmosDB trigger '{function_name}' processed %s document(s).", len(documents))
+"""
+
+    if trigger == "durable":
+        return f"""from __future__ import annotations
+
+import logging
+
+import azure.functions as func
+import azure.functions.durable_functions as df
+
+{function_name}_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@{function_name}_blueprint.route(
+    route="orchestrators/{{functionName}}",
+    methods=["POST"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
+@{function_name}_blueprint.durable_client_input(client_name="client")
+async def {function_name}_http_start(
+    req: func.HttpRequest, client: df.DurableOrchestrationClient
+) -> func.HttpResponse:
+    instance_id = await client.start_new(req.route_params["functionName"])
+    logging.info("Started orchestration with ID '%s'.", instance_id)
+    return client.create_check_status_response(req, instance_id)
+
+
+@{function_name}_blueprint.orchestration_trigger(context_name="context")
+def {function_name}_orchestrator(context: df.DurableOrchestrationContext) -> list[str]:
+    results: list[str] = []
+    results.append(yield context.call_activity("{function_name}_activity", "Tokyo"))
+    results.append(yield context.call_activity("{function_name}_activity", "Seattle"))
+    results.append(yield context.call_activity("{function_name}_activity", "London"))
+    return results
+
+
+@{function_name}_blueprint.activity_trigger(input_name="city")
+def {function_name}_activity(city: str) -> str:
+    return f"Hello, {{city}}!"
+"""
+
+    if trigger == "ai":
+        return f"""from __future__ import annotations
+
+import json
+import logging
+import os
+
+import azure.functions as func
+
+{function_name}_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@{function_name}_blueprint.route(
+    route="chat",
+    methods=["POST"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
+async def {function_name}(req: func.HttpRequest) -> func.HttpResponse:
+    try:
+        body = req.get_json()
+        prompt = body.get("prompt", "")
+    except ValueError:
+        return func.HttpResponse(
+            body=json.dumps({{"error": "Invalid JSON body."}}),
+            status_code=400,
+            mimetype="application/json",
+        )
+
+    if not prompt:
+        return func.HttpResponse(
+            body=json.dumps({{"error": "Missing 'prompt' field."}}),
+            status_code=400,
+            mimetype="application/json",
+        )
+
+    logging.info("AI function '{function_name}' received prompt: %s", prompt[:50])
+    return func.HttpResponse(
+        body=json.dumps({{"response": f"Echo: {{prompt}}"}}),
+        status_code=200,
+        mimetype="application/json",
+    )
+"""
+
     raise ScaffoldError(f"No function module template for trigger '{trigger}'.")
 
 
@@ -376,11 +504,78 @@ def test_{function_name}_runs_without_error() -> None:
     {function_name}(message)
 """
 
+    if trigger == "eventhub":
+        return f"""from __future__ import annotations
+
+from types import SimpleNamespace
+
+from app.functions.{function_name} import {function_name}
+
+
+def test_{function_name}_runs_without_error() -> None:
+    event = SimpleNamespace(get_body=lambda: b"hello")
+
+    {function_name}(event)
+"""
+
+    if trigger == "cosmosdb":
+        return f"""from __future__ import annotations
+
+from app.functions.{function_name} import {function_name}
+
+
+def test_{function_name}_runs_without_error() -> None:
+    documents = [{{"id": "1", "data": "hello"}}]
+
+    {function_name}(documents)
+"""
+
+    if trigger == "durable":
+        return f"""from __future__ import annotations
+
+from app.functions.{function_name} import {function_name}_activity
+
+
+def test_{function_name}_activity_returns_greeting() -> None:
+    result = {function_name}_activity("Tokyo")
+
+    assert result == "Hello, Tokyo!"
+"""
+
+    if trigger == "ai":
+        return f"""from __future__ import annotations
+
+import json
+
+import azure.functions as func
+
+from app.functions.{function_name} import {function_name}
+
+
+def test_{function_name}_rejects_missing_prompt() -> None:
+    request = func.HttpRequest(
+        method="POST",
+        url="http://localhost/api/chat",
+        params={{}},
+        body=json.dumps({{"prompt": ""}}).encode(),
+        headers={{"Content-Type": "application/json"}},
+    )
+
+    import asyncio
+
+    response = asyncio.run({function_name}(request))
+
+    assert response.status_code == 400
+"""
+
     raise ScaffoldError(f"No function test template for trigger '{trigger}'.")
 
 
 def _ensure_host_extensions(host_json_path: Path, trigger: str) -> None:
-    if trigger not in {"queue", "blob", "servicebus"} or not host_json_path.exists():
+    if (
+        trigger not in {"queue", "blob", "servicebus", "eventhub", "cosmosdb"}
+        or not host_json_path.exists()
+    ):
         return
 
     host_config = json.loads(host_json_path.read_text(encoding="utf-8"))
@@ -395,7 +590,22 @@ def _ensure_host_extensions(host_json_path: Path, trigger: str) -> None:
 
 
 def _ensure_local_settings_values(project_root: Path, trigger: str) -> None:
-    if trigger != "servicebus":
+    connection_keys: dict[str, tuple[str, str]] = {
+        "servicebus": (
+            "ServiceBusConnection",
+            "Endpoint=sb://localhost/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=replace-me",
+        ),
+        "eventhub": (
+            "EventHubConnection",
+            "Endpoint=sb://localhost/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=replace-me",
+        ),
+        "cosmosdb": (
+            "CosmosDBConnection",
+            "AccountEndpoint=https://localhost:8081/;AccountKey=replace-me",
+        ),
+    }
+
+    if trigger not in connection_keys:
         return
 
     local_settings_path = project_root / "local.settings.json.example"
@@ -404,10 +614,8 @@ def _ensure_local_settings_values(project_root: Path, trigger: str) -> None:
 
     local_settings = json.loads(local_settings_path.read_text(encoding="utf-8"))
     values = local_settings.setdefault("Values", {})
-    values.setdefault(
-        "ServiceBusConnection",
-        "Endpoint=sb://localhost/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=replace-me",
-    )
+    key, default = connection_keys[trigger]
+    values.setdefault(key, default)
     local_settings_path.write_text(
         f"{json.dumps(local_settings, indent=2)}\n",
         encoding="utf-8",

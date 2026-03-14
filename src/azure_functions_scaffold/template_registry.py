@@ -34,6 +34,26 @@ TEMPLATE_SPECS = (
         description="Service Bus-trigger Azure Functions Python v2 application.",
         root=TEMPLATE_ROOT / "servicebus",
     ),
+    TemplateSpec(
+        name="eventhub",
+        description="EventHub-trigger Azure Functions Python v2 application.",
+        root=TEMPLATE_ROOT / "eventhub",
+    ),
+    TemplateSpec(
+        name="cosmosdb",
+        description="CosmosDB-trigger Azure Functions Python v2 application.",
+        root=TEMPLATE_ROOT / "cosmosdb",
+    ),
+    TemplateSpec(
+        name="durable",
+        description="Durable Functions Azure Functions Python v2 application.",
+        root=TEMPLATE_ROOT / "durable",
+    ),
+    TemplateSpec(
+        name="ai",
+        description="AI/Azure OpenAI Azure Functions Python v2 application.",
+        root=TEMPLATE_ROOT / "ai",
+    ),
 )
 PRESET_SPECS = (
     PresetSpec(

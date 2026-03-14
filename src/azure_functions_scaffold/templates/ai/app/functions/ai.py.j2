@@ -1,0 +1,42 @@
+from __future__ import annotations
+
+import json
+import logging
+
+import azure.functions as func
+
+from app.services.ai_service import generate_completion
+
+ai_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
+
+
+@ai_blueprint.route(
+    route="chat",
+    methods=["POST"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
+async def chat(req: func.HttpRequest) -> func.HttpResponse:
+    try:
+        body = req.get_json()
+        prompt = body.get("prompt", "")
+    except ValueError:
+        return func.HttpResponse(
+            body=json.dumps({"error": "Invalid JSON body."}),
+            status_code=400,
+            mimetype="application/json",
+        )
+
+    if not prompt:
+        return func.HttpResponse(
+            body=json.dumps({"error": "Missing 'prompt' field."}),
+            status_code=400,
+            mimetype="application/json",
+        )
+
+    result = await generate_completion(prompt)
+    logging.info("Generated completion for prompt: %s", prompt[:50])
+    return func.HttpResponse(
+        body=json.dumps({"response": result}),
+        status_code=200,
+        mimetype="application/json",
+    )

@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+from app.functions.cosmosdb import process_cosmos_changes
+
+
+def test_process_cosmos_changes_runs_without_error() -> None:
+    documents = [{"id": "1", "data": "hello"}]
+
+    process_cosmos_changes(documents)

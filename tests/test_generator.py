@@ -15,7 +15,7 @@ def test_add_function_rejects_unknown_trigger(tmp_path: Path) -> None:
     project_root = scaffold_project("sample", tmp_path)
 
     with pytest.raises(ScaffoldError, match="Unsupported trigger"):
-        add_function(project_root=project_root, trigger="durable", function_name="sync-data")
+        add_function(project_root=project_root, trigger="graphql", function_name="sync-data")
 
 
 def test_add_function_rejects_non_scaffold_project(tmp_path: Path) -> None:
@@ -103,6 +103,10 @@ def test_add_function_can_skip_test_generation_for_minimal_preset(tmp_path: Path
         ("queue", "sync-data"),
         ("blob", "ingest-reports"),
         ("servicebus", "process-events"),
+        ("eventhub", "listen-events"),
+        ("cosmosdb", "track-changes"),
+        ("durable", "orchestrate-flow"),
+        ("ai", "ask-question"),
     ],
 )
 def test_add_function_supports_additional_triggers(
@@ -123,7 +127,7 @@ def test_add_function_supports_additional_triggers(
     assert (project_root / f"tests/test_{normalized_name}.py").exists()
 
 
-@pytest.mark.parametrize("trigger", ["queue", "blob", "servicebus"])
+@pytest.mark.parametrize("trigger", ["queue", "blob", "servicebus", "eventhub", "cosmosdb"])
 def test_add_function_adds_extension_bundle_for_binding_triggers(
     tmp_path: Path,
     trigger: str,

@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+from app.services.durable_service import build_greeting
+
+
+def test_build_greeting_returns_city_greeting() -> None:
+    result = build_greeting("Tokyo")
+
+    assert result == "Hello, Tokyo!"

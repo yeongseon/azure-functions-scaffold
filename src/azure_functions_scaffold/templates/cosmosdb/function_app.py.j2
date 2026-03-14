@@ -1,0 +1,14 @@
+from __future__ import annotations
+
+import azure.functions as func
+
+from app.core.logging import configure_logging
+from app.functions.cosmosdb import cosmosdb_blueprint
+
+# azure-functions-scaffold: function imports
+
+configure_logging()
+
+app = func.FunctionApp()
+# azure-functions-scaffold: function registrations
+app.register_functions(cosmosdb_blueprint)
