@@ -46,11 +46,12 @@ jobs:
       - name: Generate project with scaffold CLI
         run: |
           SCAFFOLDED=/tmp/e2e-scaffolded
-          azure-functions-scaffold init \
-            --name "e2e-http-app" \
-            --trigger http \
-            --output-dir "$SCAFFOLDED"
-          echo "E2E_SCAFFOLDED_DIR=$SCAFFOLDED" >> "$GITHUB_ENV"
+          azure-functions-scaffold new "e2e-http-app" \
+            --destination "$SCAFFOLDED" \
+            --template http \
+            --no-git \
+            --no-github-actions
+          echo "E2E_SCAFFOLDED_DIR=$SCAFFOLDED/e2e-http-app" >> "$GITHUB_ENV"
 
       - name: Run scaffold structure tests (no Azure)
         run: pytest tests/e2e -v -k "scaffolded" --no-cov
