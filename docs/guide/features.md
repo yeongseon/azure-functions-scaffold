@@ -24,6 +24,34 @@ afs new secure-api --preset strict
 
 Combine flags to add specialized capabilities to your project.
 
+#### Structured Logging (Built-in)
+
+Every scaffold template includes `azure-functions-logging` as a default dependency.
+Structured JSON logging is configured in `app/core/logging.py` and activated at startup
+in `function_app.py` — no flag required.
+
+```python
+# app/core/logging.py (generated)
+from azure_functions_logging import get_logger, setup_logging
+
+
+def configure_logging() -> None:
+    setup_logging(format="json")
+
+
+logger = get_logger("my-api")
+```
+
+To use structured logging anywhere in your app:
+
+```python
+from app.core.logging import logger
+
+logger.info("request received", route="/api/hello")
+```
+
+See [azure-functions-logging](https://github.com/yeongseon/azure-functions-logging) for the full API.
+
 #### --with-openapi
 
 Adds `azure-functions-openapi` to the dependencies and configures HTTP triggers with the necessary decorators for Swagger/OpenAPI documentation.

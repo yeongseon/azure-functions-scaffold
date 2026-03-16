@@ -51,6 +51,29 @@ afs new [PROJECT_NAME] [OPTIONS]
 | `--git` / `--no-git` | `--no-git` | Run `git init` in the generated project. |
 | `--overwrite` | `False` | Replace an existing target directory. |
 
+### Built-in Features
+
+The following are included in every generated project regardless of flags.
+
+| Feature | Dependency | Location |
+| :--- | :--- | :--- |
+| Structured logging | `azure-functions-logging` | `app/core/logging.py` |
+
+Structured JSON logging is pre-configured via `configure_logging()` in `app/core/logging.py`
+and called at startup in `function_app.py`. No additional flag is required.
+
+```python
+# app/core/logging.py (generated)
+from azure_functions_logging import get_logger, setup_logging
+
+
+def configure_logging() -> None:
+    setup_logging(format="json")
+
+
+logger = get_logger("my-api")
+```
+
 ### Optional Feature Flags
 
 | Flag | Default | Effect |
