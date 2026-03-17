@@ -18,6 +18,20 @@ Scaffolding CLI for production-ready Azure Functions Python v2 projects.
 
 Starting a new Azure Functions project means setting up boilerplate: `host.json`, `function_app.py`, directory structure, tooling config, and tests. `azure-functions-scaffold` generates a production-ready project layout in one command, so you can focus on business logic from the start.
 
+```mermaid
+flowchart LR
+    Dev(["Developer"])
+    CLI["afs new my-api"]
+    T["Templates"]
+    P["Generated Project"]
+    VAL["azure-functions-validation"]
+
+    Dev --> CLI
+    CLI --> T
+    T --> P
+    CLI -- "--with-validation" --> VAL
+    VAL --> P
+```
 ## Scope
 
 - Azure Functions Python **v2 programming model**

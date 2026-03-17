@@ -70,3 +70,77 @@ graph TD;
     template_registry.py --> models.py;
     models.py --> errors.py;
 ```
+
+## Runtime Sequence
+
+### `afs new` flow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CLI as cli.py
+    participant SC as scaffolder.py
+    participant TR as template_registry.py
+    participant GEN as generator.py
+    participant FS as File System
+
+    Dev->>CLI: afs new my-api --template http
+    CLI->>SC: ProjectOptions(name, template, preset, features)
+    SC->>TR: resolve template path
+    TR-->>SC: template directory
+    SC->>GEN: render(template_dir, context)
+    GEN->>FS: write project files
+    GEN-->>SC: generated file list
+    SC-->>Dev: project ready at ./my-api
+```
+
+### `afs add` flow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CLI as cli.py
+    participant GEN as generator.py
+    participant FS as File System
+
+    Dev->>CLI: afs add http get-user --project-root ./my-api
+    CLI->>GEN: verify project root
+    GEN->>FS: read function_app.py
+    GEN->>FS: render new function module
+    GEN->>FS: append import + register_blueprint
+    GEN-->>Dev: function added
+```
+
+## Data Model
+
+```mermaid
+classDiagram
+    class ProjectOptions {
+        +str name
+        +str template
+        +str preset
+        +list~str~ features
+    }
+    class TemplateContext {
+        +dict~str, Any~ variables
+    }
+    class TemplateSpec {
+        +str name
+        +str description
+        +list~str~ default_files
+    }
+    class PresetSpec {
+        +str name
+        +list~str~ linters
+        +list~str~ test_tools
+    }
+    class ScaffoldError {
+        +str message
+    }
+
+    ProjectOptions --> TemplateContext : builds
+    ProjectOptions --> TemplateSpec : selects
+    ProjectOptions --> PresetSpec : applies
+    ScaffoldError <|-- TemplateNotFoundError
+    ScaffoldError <|-- InvalidProjectError
+```
