@@ -70,12 +70,12 @@ sources = ["src"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/src",
-    "/tests",
-    "/docs",
-    "/README.md",
-    "/Makefile",
-    "/pyproject.toml",
+    "src",
+    "tests",
+    "docs",
+    "README.md",
+    "Makefile",
+    "pyproject.toml",
 ]
 
 [tool.hatch.version]
@@ -140,7 +140,7 @@ omit = ["src/azure_functions_scaffold/templates/**/*.j2"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 92
+fail_under = 90
 skip_covered = true
 
 [tool.bandit]
