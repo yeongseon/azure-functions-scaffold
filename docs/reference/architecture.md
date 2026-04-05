@@ -2,6 +2,14 @@
 
 Internal structure and design principles for `azure-functions-scaffold`.
 
+## Design Objectives
+
+1. **Offline-first generation** — All templates ship with the package; no network calls during scaffolding.
+2. **Deterministic output** — Given identical inputs, the scaffolded project is identical every run.
+3. **Python v2 programming model only** — Targets the Azure Functions Python v2 model exclusively.
+4. **Conservative CLI evolution** — Public CLI behaviour follows semver; no silent breaking changes.
+5. **Template-driven trigger support** — New trigger types are added as template directories in `templates/`, with a corresponding `TemplateSpec` entry in `template_registry.py`. The orchestration layer (`scaffolder.py`) requires no changes, though `generator.py` may need trigger-specific rendering or post-processing logic.
+
 ## Overview
 
 A CLI tool built with Typer and Jinja2. It provides offline-capable, deterministic project generation for Azure Functions Python v2.
@@ -11,10 +19,10 @@ A CLI tool built with Typer and Jinja2. It provides offline-capable, determinist
 ### `new` Command
 
 1. **CLI Parsing**: `cli.py` receives user input and options via Typer.
-2. **Options Normalization**: `scaffolder.py` creates a `ProjectOptions` instance.
+2. **Options Resolution**: `template_registry.py` builds a `ProjectOptions` instance from CLI inputs and preset defaults.
 3. **Template Discovery**: `template_registry.py` identifies the requested template path.
-4. **Context Preparation**: `models.py` builds the `TemplateContext` object.
-5. **Generation**: `generator.py` processes Jinja2 templates and writes to the filesystem.
+4. **Context Preparation**: `scaffolder.py` builds the `TemplateContext` from `ProjectOptions`.
+5. **Generation**: `scaffolder.py` drives Jinja2 rendering via its own render loop and writes to the filesystem.
 6. **Post-Processing**: `scaffolder.py` initializes git or runs optional checks if requested.
 
 ### `add` Command
@@ -36,13 +44,45 @@ A CLI tool built with Typer and Jinja2. It provides offline-capable, determinist
 | `errors.py` | Custom exception types for the scaffolding lifecycle. |
 | `templates/` | Source Jinja2 and static files for project generation. |
 
+## Public API Boundary
+
+`azure-functions-scaffold` is primarily a CLI tool. The package root exports only `__version__` via `__all__`.
+
+### CLI entry point (`afs` / `azure-functions-scaffold`)
+
+| Command | Description |
+| :--- | :--- |
+| `afs new` | Scaffold a new Azure Functions Python v2 project |
+| `afs add` | Add a function module to an existing scaffolded project |
+| `afs templates` | List available scaffold templates |
+| `afs presets` | List available project presets |
+
+### Documented module-level API
+
+The following functions and types are importable and documented in the [API Reference](api.md), but are not re-exported from `__init__.py`.
+
+| Symbol | Module | Kind |
+| :--- | :--- | :--- |
+| `scaffold_project()` | `scaffolder` | function |
+| `describe_scaffold_project()` | `scaffolder` | function |
+| `add_function()` | `generator` | function |
+| `describe_add_function()` | `generator` | function |
+| `list_templates()` | `template_registry` | function |
+| `list_presets()` | `template_registry` | function |
+| `build_project_options()` | `template_registry` | function |
+| `ProjectOptions` | `models` | frozen dataclass |
+| `TemplateContext` | `models` | frozen dataclass |
+| `TemplateSpec` | `models` | frozen dataclass |
+| `PresetSpec` | `models` | frozen dataclass |
+| `ScaffoldError` | `errors` | exception |
+
 ## Data Model
 
-- **`TemplateContext`**: Flat dictionary containing all variables for Jinja2 rendering.
-- **`ProjectOptions`**: Frozen dataclass for validated CLI inputs.
-- **`TemplateSpec`**: Metadata for a trigger template (name, description, default files).
-- **`PresetSpec`**: Configuration object defining which linters and test tools to include.
-- **`ScaffoldError`**: Base exception class for all tool-specific errors.
+- **`TemplateContext`**: Frozen dataclass holding all Jinja2 template variables (project name, slug, Python version, feature flags such as `include_openapi`, `include_ruff`, etc.).
+- **`ProjectOptions`**: Frozen dataclass for validated CLI inputs (preset name, Python version, tooling tuple, feature flags).
+- **`TemplateSpec`**: Frozen dataclass for trigger template metadata (name, description, root path).
+- **`PresetSpec`**: Frozen dataclass for preset configuration (name, description, tooling tuple).
+- **`ScaffoldError`**: Single domain exception (`RuntimeError` subclass) for all scaffolding failures.
 
 ## Template System
 
@@ -111,39 +151,86 @@ sequenceDiagram
     GEN-->>Dev: function added
 ```
 
-## Data Model
+## Class Diagram
 
 ```mermaid
 classDiagram
     class ProjectOptions {
-        +str name
-        +str template
-        +str preset
-        +list~str~ features
+        +str preset_name
+        +str python_version
+        +tuple~str~ tooling
+        +bool include_github_actions
+        +bool initialize_git
+        +bool include_openapi
+        +bool include_validation
+        +bool include_doctor
     }
     class TemplateContext {
-        +dict~str, Any~ variables
+        +str project_name
+        +str project_slug
+        +str python_version
+        +str python_upper_bound
+        +str preset_name
+        +bool include_github_actions
+        +bool initialize_git
+        +bool include_ruff
+        +bool include_mypy
+        +bool include_pytest
+        +bool include_openapi
+        +bool include_validation
+        +bool include_doctor
     }
     class TemplateSpec {
         +str name
         +str description
-        +list~str~ default_files
+        +Path root
     }
     class PresetSpec {
         +str name
-        +list~str~ linters
-        +list~str~ test_tools
+        +str description
+        +tuple~str~ tooling
     }
     class ScaffoldError {
-        +str message
     }
 
     ProjectOptions --> TemplateContext : builds
     ProjectOptions --> TemplateSpec : selects
     ProjectOptions --> PresetSpec : applies
-    ScaffoldError <|-- TemplateNotFoundError
-    ScaffoldError <|-- InvalidProjectError
 ```
+
+## Key Design Decisions
+
+### 1. Typer for CLI framework
+
+Typer provides type-annotated command definitions with automatic help generation. The CLI stays small and declarative.
+
+### 2. Jinja2 for template rendering
+
+Templates are standard Jinja2 with `.j2` extension stripping. This keeps templates readable and editable without custom DSL knowledge.
+
+### 3. Blueprint-based function registration
+
+Generated scaffolded projects use `func.Blueprint()` for modular registration. Each trigger gets its own module under `app/functions/`, imported and registered in `function_app.py` via marker comments.
+
+### 4. Frozen dataclasses for configuration
+
+`ProjectOptions`, `TemplateContext`, `TemplateSpec`, and `PresetSpec` are all `@dataclass(frozen=True)`. Immutability prevents accidental mutation during the rendering pipeline.
+
+### 5. Single domain exception
+
+The project uses a single domain exception, `ScaffoldError(RuntimeError)`. The CLI catches `ScaffoldError` at the top level and converts it to a coloured error message with exit code 1.
+
+### 6. Marker-based function_app.py updates
+
+The `add` command inserts imports and registrations using marker comments (`# azure-functions-scaffold: function imports` / `# azure-functions-scaffold: function registrations`). This avoids AST manipulation while keeping updates predictable.
+
+## Related Documents
+
+- [CLI Reference](cli.md)
+- [Template Spec Reference](template-spec.md)
+- [API Reference](api.md)
+- [Testing Guide](../testing.md)
+- [FAQ](../faq.md)
 
 ## Sources
 
