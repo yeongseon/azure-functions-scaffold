@@ -50,3 +50,35 @@ This project does not aim to:
 - Generated-project quality gates are user-facing behavior.
 - Experimental templates or commands must be clearly labeled in code and docs.
 - Interactive flows must remain scriptable through equivalent non-interactive flags.
+
+## High-Level Architecture
+
+```mermaid
+flowchart TD
+    CLI["cli.py\nTyper commands"]
+    SC["scaffolder.py\nOrchestration + rendering"]
+    TR["template_registry.py\nTemplate lookup"]
+    GEN["generator.py\nJinja2 rendering + I/O"]
+    FS[("File System")]
+
+    CLI -- "afs new" --> SC
+    SC --> TR
+    SC --> FS
+    CLI -- "afs add" --> GEN
+    GEN --> FS
+```
+
+## Sources
+
+- [Azure Functions Python developer reference](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python)
+- [Create your first function (Python v2)](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-python)
+- [Azure Functions host.json reference](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json)
+- [Supported languages in Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/supported-languages)
+
+## See Also
+
+- [azure-functions-validation — Architecture](https://github.com/yeongseon/azure-functions-validation) — Request/response validation pipeline
+- [azure-functions-openapi — Architecture](https://github.com/yeongseon/azure-functions-openapi) — OpenAPI spec generation
+- [azure-functions-logging — Architecture](https://github.com/yeongseon/azure-functions-logging) — Structured logging with contextvars
+- [azure-functions-doctor — Architecture](https://github.com/yeongseon/azure-functions-doctor) — Pre-deploy diagnostic CLI
+- [azure-functions-langgraph — Architecture](https://github.com/yeongseon/azure-functions-langgraph) — LangGraph agent deployment
