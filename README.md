@@ -46,8 +46,8 @@ This tool generates project scaffolds. It does **not** provide runtime libraries
 This package does not own:
 
 - **Runtime behavior** — generated projects wire up optional packages (`--with-openapi`, `--with-validation`, `--with-doctor`), but runtime logic belongs to those packages
-- **API documentation** — use [`azure-functions-openapi`](https://github.com/yeongseon/azure-functions-openapi) for OpenAPI spec generation and Swagger UI
-- **Request validation** — use [`azure-functions-validation`](https://github.com/yeongseon/azure-functions-validation) for Pydantic-based validation
+- **API documentation** — use [`azure-functions-openapi`](https://github.com/yeongseon/azure-functions-openapi) for API documentation and spec generation
+- **Request validation** — use [`azure-functions-validation`](https://github.com/yeongseon/azure-functions-validation) for request/response validation and serialization
 
 ## Features
 
@@ -235,6 +235,7 @@ This package is part of the **Azure Functions Python DX Toolkit**.
 | [azure-functions-doctor](https://github.com/yeongseon/azure-functions-doctor) | Pre-deploy diagnostic CLI |
 | [azure-functions-durable-graph](https://github.com/yeongseon/azure-functions-durable-graph) | Manifest-first graph runtime with Durable Functions *(planned)* |
 | [azure-functions-python-cookbook](https://github.com/yeongseon/azure-functions-python-cookbook) | Recipes and examples |
+
 ## Disclaimer
 
 This project is an independent community project and is not affiliated with,
