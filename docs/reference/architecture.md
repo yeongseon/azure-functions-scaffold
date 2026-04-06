@@ -128,6 +128,8 @@ sequenceDiagram
     participant FS as File System
 
     Dev->>CLI: afs new my-api --template http
+    CLI->>TR: build_project_options(preset, python_version, ...)
+    TR-->>CLI: ProjectOptions
     CLI->>SC: scaffold_project(name, template, options)
     SC->>TR: get_template(template_name)
     TR-->>SC: TemplateSpec (template directory)
@@ -150,7 +152,7 @@ sequenceDiagram
     CLI->>GEN: verify project root
     GEN->>FS: read function_app.py
     GEN->>FS: render new function module
-    GEN->>FS: append import + app.register_functions(blueprint)
+    GEN->>FS: append import + app.register_functions(<name>_blueprint)
     GEN-->>Dev: function added
 ```
 
