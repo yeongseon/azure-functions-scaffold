@@ -1,5 +1,7 @@
 # Deploying
 
+> For a comprehensive step-by-step deployment walkthrough with examples, see [Deployment Guide](../deployment.md).
+
 Once your project is ready for production, follow these steps to deploy it to Azure.
 
 ### Pre-deployment Checklist
