@@ -1,0 +1,409 @@
+# azure-functions-scaffold — Full LLM Reference
+
+> Scaffolding CLI for production-ready Azure Functions Python v2 projects.
+
+## Package Info
+
+- PyPI: `pip install azure-functions-scaffold`
+- Version: 0.3.2
+- Python: >=3.10, <3.15
+- License: MIT
+- Docs: https://yeongseon.github.io/azure-functions-scaffold/
+- Repository: https://github.com/yeongseon/azure-functions-scaffold
+- Azure Functions programming model: v2
+
+## Installation
+
+```bash
+pip install azure-functions-scaffold
+```
+
+## Entry Points
+
+- CLI: `azure-functions-scaffold` or `afs` (short alias)
+- Python import: `from azure_functions_scaffold.scaffolder import scaffold_project`
+
+## Complete CLI Reference
+
+### Root Command
+
+```bash
+azure-functions-scaffold [COMMAND] [OPTIONS]
+```
+
+Options:
+- `--version` — Show installed version and exit
+
+### Command: `new`
+
+Create a new Azure Functions Python v2 project scaffold.
+
+```bash
+azure-functions-scaffold new [PROJECT_NAME] [OPTIONS]
+```
+
+Arguments:
+- `PROJECT_NAME` (optional) — Directory name for the new project
+  - If omitted, enters interactive mode (same as `--interactive`)
+  - Must start with alphanumeric character
+  - Only letters, numbers, hyphens, underscores allowed
+
+Options:
+
+- `-d, --destination PATH`
+  - Base directory where project folder will be created
+  - Default: `.` (current directory)
+  - Type: Path
+
+- `-t, --template TEMPLATE`
+  - Template to render
+  - Default: `http`
+  - Choices: `http`, `timer`, `queue`, `blob`, `servicebus`
+  - Type: String
+
+- `--preset PRESET`
+  - Project preset to apply (combines tooling levels)
+  - Default: `standard`
+  - Choices: `minimal`, `standard`, `strict`
+  - Type: String
+
+- `--python-version VERSION`
+  - Python version for generated project
+  - Default: `3.10`
+  - Supported: `3.10`, `3.11`, `3.12`, `3.13`, `3.14`
+  - Type: String
+
+- `--github-actions / --no-github-actions`
+  - Include basic GitHub Actions CI workflow
+  - Default: False
+
+- `--git / --no-git`
+  - Initialize git repository in generated project
+  - Default: False
+
+- `--with-openapi / --no-openapi`
+  - Include OpenAPI documentation support (HTTP template only)
+  - Default: False
+
+- `--with-validation / --no-validation`
+  - Include request validation support (HTTP template only)
+  - Default: False
+
+- `--with-doctor / --no-doctor`
+  - Include azure-functions-doctor health checks
+  - Default: False
+
+- `-i, --interactive`
+  - Prompt for project options interactively
+  - Default: False (unless PROJECT_NAME is omitted)
+
+- `--dry-run`
+  - Preview generated project without writing files
+  - Shows what will be created
+  - Default: False
+
+- `--overwrite`
+  - Replace existing target directory before generating
+  - Default: False
+
+Exit codes:
+- `0` — Success
+- `1` — Validation or generation error
+
+Output: Success message with path to created project or dry-run preview
+
+### Command: `add`
+
+Add a new function module to an existing scaffolded project.
+
+```bash
+azure-functions-scaffold add TRIGGER FUNCTION_NAME [OPTIONS]
+```
+
+Arguments:
+- `TRIGGER` (required) — Trigger type to add
+  - Choices: `http`, `timer`, `queue`, `blob`, `servicebus`
+  - Determines the function template and binding configuration
+
+- `FUNCTION_NAME` (required) — Function name to add
+  - Must be valid Python module name
+  - Added to `app/functions/{TRIGGER}_{function_name}.py`
+
+Options:
+
+- `--project-root PATH`
+  - Existing scaffolded project directory
+  - Default: `.` (current directory)
+  - Must contain valid `function_app.py` and `app/` structure
+
+- `--dry-run`
+  - Preview added files without modifying project
+  - Default: False
+
+Exit codes:
+- `0` — Success
+- `1` — Project validation or generation error
+
+Output: Success message with path to created function or dry-run preview
+
+### Command: `templates`
+
+List available project templates.
+
+```bash
+azure-functions-scaffold templates
+```
+
+Output format per template:
+```
+{name}: {description}
+```
+
+Templates:
+
+- `http` — REST API endpoint with request/response patterns
+- `timer` — Scheduled function using NCRONTAB expression
+- `queue` — Azure Storage Queue trigger (local Azurite support)
+- `blob` — Azure Blob Storage trigger for file processing
+- `servicebus` — Azure Service Bus trigger for enterprise messaging
+
+### Command: `presets`
+
+List available project presets.
+
+```bash
+azure-functions-scaffold presets
+```
+
+Output format per preset:
+```
+{name}: {description} [tooling: {tools}]
+```
+
+Presets:
+
+- `minimal` — Bare essentials: host.json, function_app.py [tooling: none]
+- `standard` — Standard tools: ruff, pytest, mypy [tooling: ruff, pytest, mypy]
+- `strict` — Production-ready: full tooling + diagnostics [tooling: ruff, pytest, mypy]
+
+## Interactive Mode
+
+When `--interactive` is used or PROJECT_NAME is omitted, prompts for:
+
+1. Project name (with validation)
+2. Template selection (http, timer, queue, blob, servicebus)
+3. Preset selection (minimal, standard, strict)
+4. Python version (3.10, 3.11, 3.12, 3.13, 3.14)
+5. Include GitHub Actions workflow? (yes/no)
+6. Initialize git repository? (yes/no)
+7. Tooling selection (based on preset defaults)
+   - Include Ruff?
+   - Include mypy?
+   - Include pytest?
+8. Include OpenAPI documentation? (yes/no, HTTP only)
+9. Include request validation? (yes/no, HTTP only)
+10. Include azure-functions-doctor? (yes/no)
+
+## Common Workflows
+
+### Workflow 1: Create HTTP API with Full Tooling
+
+```bash
+azure-functions-scaffold new my-api --preset strict --with-openapi --with-validation
+cd my-api
+pip install -e .
+func start
+```
+
+Creates:
+- Production-ready project with ruff, mypy, pytest
+- OpenAPI/Swagger endpoints at `/api/docs`
+- Pydantic request/response validation
+- Basic CI workflow with GitHub Actions
+
+### Workflow 2: Create Timer Function Minimal
+
+```bash
+azure-functions-scaffold new my-scheduler --template timer --preset minimal
+cd my-scheduler
+pip install -e .
+func start
+```
+
+Creates:
+- Timer-triggered function using NCRONTAB expression
+- Minimal dependencies (host.json, function_app.py only)
+- Ready for local testing
+
+### Workflow 3: Expand Existing Project with Multiple Triggers
+
+```bash
+# Initial creation
+azure-functions-scaffold new my-app --template http
+
+# Expand with additional functions
+cd my-app
+azure-functions-scaffold add timer scheduled_job
+azure-functions-scaffold add queue message_processor
+azure-functions-scaffold add blob file_handler
+```
+
+Each `add` command creates new function module in `app/functions/` with proper
+trigger binding configuration.
+
+### Workflow 4: Dry Run Preview
+
+```bash
+# Preview without creating files
+azure-functions-scaffold new my-test --dry-run
+azure-functions-scaffold add http my_handler --project-root . --dry-run
+```
+
+### Workflow 5: Interactive Project Setup
+
+```bash
+# Start interactive guided setup
+azure-functions-scaffold new
+
+# Or omit PROJECT_NAME which also triggers interactive mode
+azure-functions-scaffold new
+```
+
+## Project Structure Generated
+
+### HTTP Template
+
+```
+my-api/
+├── function_app.py
+├── host.json
+├── local.settings.json.example
+├── pyproject.toml
+├── .gitignore
+├── app/
+│  ├── __init__.py
+│  ├── core/
+│  │  ├── __init__.py
+│  │  └── logging.py          # Structured JSON logging config
+│  ├── functions/
+│  │  ├── __init__.py
+│  │  └── http.py             # HTTP trigger blueprint
+│  ├── schemas/
+│  │  ├── __init__.py
+│  │  └── request_models.py   # Pydantic models (if --with-validation)
+│  └── services/
+│     ├── __init__.py
+│     └── hello_service.py    # Business logic
+└── tests/
+   ├── __init__.py
+   └── test_http.py           # Pytest tests
+```
+
+### Timer Template
+
+```
+my-scheduler/
+├── function_app.py
+├── host.json
+├── pyproject.toml
+├── app/
+│  ├── functions/
+│  │  └── timer.py            # Timer trigger
+│  ├── core/
+│  │  └── logging.py
+│  └── services/
+│     └── job_service.py
+└── tests/
+   └── test_timer.py
+```
+
+### Queue/Blob/ServiceBus Templates
+
+Similar structure with trigger-specific binding modules and service patterns.
+
+## Environment
+
+### Generated `local.settings.json.example`
+
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing"
+  },
+  "Host": {
+    "CORS": {
+      "AllowedOrigins": ["*"]
+    }
+  }
+}
+```
+
+Copy to `local.settings.json` and update for local development.
+
+### Preset Tooling
+
+#### `minimal`
+- No additional tooling (bare essentials only)
+
+#### `standard`
+- `ruff` — Code linting and formatting (with pre-commit hook)
+- `pytest` — Testing framework
+- `mypy` — Static type checking
+
+#### `strict`
+- All `standard` tools
+- `azure-functions-doctor` — Pre-deploy diagnostics CLI
+
+## Optional Integrations
+
+### `--with-validation`
+
+Integrates `azure-functions-validation` for request/response validation:
+- Pydantic models in `app/schemas/`
+- Auto-validation on HTTP endpoints
+- OpenAPI schema generation support
+
+### `--with-openapi`
+
+Integrates `azure-functions-openapi` (HTTP only):
+- `/api/docs` — Swagger UI
+- `/api/openapi.json` — OpenAPI 3.0 spec
+- Auto-generates spec from Pydantic models + code comments
+
+### `--with-doctor`
+
+Integrates `azure-functions-doctor`:
+- Pre-deploy health checks
+- Configuration validation
+- Dependency verification
+- Run with `azure-functions-doctor scan`
+
+## Error Handling
+
+Common errors:
+
+| Error | Cause | Solution |
+| --- | --- | --- |
+| `Project name is required unless --interactive is used` | PROJECT_NAME missing and not interactive | Provide PROJECT_NAME or add `--interactive` |
+| `Project name must start with alphanumeric character` | Invalid project name format | Use: letters, numbers, hyphens, underscores only |
+| `Unsupported template '{name}'` | Invalid template choice | Use: http, timer, queue, blob, servicebus |
+| `Unsupported preset '{name}'` | Invalid preset choice | Use: minimal, standard, strict |
+| `Unsupported Python version '{version}'` | Invalid Python version | Use: 3.10, 3.11, 3.12, 3.13, 3.14 |
+| `Target directory already exists` | Destination path exists | Use `--overwrite` to replace or change `--destination` |
+| `Project root is not scaffolded` | Invalid project for `add` command | Ensure `function_app.py` and `app/` structure exist |
+| `Unsupported trigger type` | Invalid trigger for `add` | Use: http, timer, queue, blob, servicebus |
+
+## Tips for LLM Integration
+
+- This is a **CLI tool**, not a Python library (though it can be imported)
+- Read CLI output with `--dry-run` before creating projects
+- Use `--interactive` for guided setup if uncertain about options
+- Use `--template` and `--preset` flags for programmatic control
+- The generated project structure is consistent across templates
+- All generated code uses type hints (Python 3.10+)
+- `app/services/` is where business logic belongs
+- Test files follow `test_{function_type}.py` pattern
+- Configuration is in `pyproject.toml` and `host.json`

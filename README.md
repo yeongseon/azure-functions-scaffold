@@ -236,6 +236,19 @@ This package is part of the **Azure Functions Python DX Toolkit**.
 | [azure-functions-durable-graph](https://github.com/yeongseon/azure-functions-durable-graph) | Manifest-first graph runtime with Durable Functions *(planned)* |
 | [azure-functions-python-cookbook](https://github.com/yeongseon/azure-functions-python-cookbook) | Recipes and examples |
 
+## For AI Coding Assistants
+
+This package includes `llms.txt` and `llms-full.txt` files in the repository root designed specifically for LLM-assisted development:
+
+- **`llms.txt`** — Concise overview of the CLI, commands, templates, and quick start
+- **`llms-full.txt`** — Complete CLI reference with all options, patterns, and workflows
+
+Use these files to provide context to AI coding assistants when working with Azure Functions scaffolding.
+
+Reference:
+- Repository: https://github.com/yeongseon/azure-functions-scaffold
+- Issue: [#40](https://github.com/yeongseon/azure-functions-scaffold/issues/40)
+
 ## Disclaimer
 
 This project is an independent community project and is not affiliated with,
