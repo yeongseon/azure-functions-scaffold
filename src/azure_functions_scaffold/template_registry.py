@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from azure_functions_scaffold.errors import ScaffoldError
-from azure_functions_scaffold.models import PresetSpec, ProjectOptions, TemplateSpec
+from azure_functions_scaffold.models import PresetSpec, ProfileSpec, ProjectOptions, TemplateSpec
 
 TEMPLATE_ROOT = Path(__file__).parent / "templates"
 SUPPORTED_PYTHON_VERSIONS = ("3.10", "3.11", "3.12", "3.13", "3.14")
@@ -72,7 +72,21 @@ PRESET_SPECS = (
         tooling=("ruff", "mypy", "pytest"),
     ),
 )
-
+PROFILE_SPECS = (
+    ProfileSpec(
+        name="api",
+        description=(
+            "Full REST API stack: HTTP template "
+            "with strict tooling, OpenAPI, validation, and doctor."
+        ),
+        template="http",
+        preset="strict",
+        include_openapi=True,
+        include_validation=True,
+        include_doctor=True,
+        include_azd=False,
+    ),
+)
 
 def list_templates() -> list[TemplateSpec]:
     return list(TEMPLATE_SPECS)
@@ -112,6 +126,7 @@ def build_project_options(
     include_openapi: bool = False,
     include_validation: bool = False,
     include_doctor: bool = False,
+    include_azd: bool = False,
 ) -> ProjectOptions:
     preset = get_preset(preset_name)
     validate_python_version(python_version)
@@ -126,6 +141,7 @@ def build_project_options(
         include_openapi=include_openapi,
         include_validation=include_validation,
         include_doctor=include_doctor,
+        include_azd=include_azd,
     )
 
 
@@ -149,3 +165,17 @@ def validate_tooling(tooling: tuple[str, ...]) -> tuple[str, ...]:
             f"Unsupported tooling selection '{invalid_list}'. Supported tooling: {available}"
         )
     return normalized
+
+
+def list_profiles() -> list[ProfileSpec]:
+    return list(PROFILE_SPECS)
+
+
+def get_profile(name: str) -> ProfileSpec:
+    normalized_name = name.strip().lower()
+    for profile in list_profiles():
+        if profile.name == normalized_name:
+            return profile
+
+    available = ", ".join(profile.name for profile in list_profiles())
+    raise ScaffoldError(f"Unknown profile '{name}'. Available profiles: {available}")
