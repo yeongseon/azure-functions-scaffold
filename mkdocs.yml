@@ -23,6 +23,7 @@ nav:
       - Project Structure: guide/project-structure.md
       - Templates: guide/templates.md
       - Features & Presets: guide/features.md
+      - Recommended Stacks: guide/stacks.md
       - Expanding Your Project: guide/expanding.md
       - Deploying: guide/deploying.md
   - Deployment:
