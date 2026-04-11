@@ -7,14 +7,14 @@ packages = ["app"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "/app",
-  "/tests",
-  "/function_app.py",
-  "/host.json",
-  "/local.settings.json.example",
-  "/README.md",
-  "/Makefile",
-  "/pyproject.toml",
+  "app",
+  "tests",
+  "function_app.py",
+  "host.json",
+  "local.settings.json.example",
+  "README.md",
+  "Makefile",
+  "pyproject.toml",
 ]
 
 [project]
@@ -25,9 +25,9 @@ readme = "README.md"
 requires-python = ">={{ python_version }},<{{ python_upper_bound }}"
 dependencies = [
   "azure-functions>=1.23.0",
-  "azure-functions-logging>=0.2.0",
+  "azure-functions-logging>=0.5.0",
 {% if include_doctor -%}
-  "azure-functions-doctor>=0.15.0",
+  "azure-functions-doctor>=0.16.0",
 {% endif -%}
 ]
 
