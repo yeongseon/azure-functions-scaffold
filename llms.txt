@@ -26,8 +26,11 @@ afs [GROUP] [COMMAND] [OPTIONS]                    # Short alias
 
 ### Main Commands
 
+- `afs new <name>` — **Top-level shortcut** for `afs api new` (creates HTTP API project with strict preset, OpenAPI, validation, and doctor)
 - `afs api new <name>` — Create HTTP API project with strict preset, OpenAPI, validation, and doctor
 - `afs api add <name>` — Add HTTP function to an existing project
+- `afs api add-route <name>` — Add a simple HTTP route (blueprint + test)
+- `afs api add-resource <name>` — Add a full CRUD resource (blueprint, service, schema, test)
 - `afs worker timer <name>` — Create timer-trigger worker project
 - `afs worker queue <name>` — Create queue-trigger worker project
 - `afs worker blob <name>` — Create blob-trigger worker project
@@ -36,9 +39,10 @@ afs [GROUP] [COMMAND] [OPTIONS]                    # Short alias
 - `afs ai agent <name>` — Create LangGraph AI agent project
 - `afs advanced new <name>` — Power-user mode with direct flag control
 - `afs advanced add <trigger> <name>` — Add any trigger function to an existing project
+- `afs advanced add-route <name>` — Add a simple HTTP route (advanced group)
+- `afs advanced add-resource <name>` — Add a full CRUD resource (advanced group)
 - `afs templates` — List available templates
 - `afs presets` — List available presets
-
 ### Common options (project creation commands)
 
 - `--destination`, `-d` — Base directory where project folder is created
@@ -67,7 +71,7 @@ afs [GROUP] [COMMAND] [OPTIONS]                    # Short alias
 
 | Template | Command | Use Case |
 | --- | --- | --- |
-| http | `afs api new my-api` | REST APIs, webhooks |
+| http | `afs new my-api` | REST APIs, webhooks |
 | timer | `afs worker timer my-job` | Scheduled tasks, cron |
 | queue | `afs worker queue my-worker` | Message processing (Azurite) |
 | blob | `afs worker blob my-blob` | File processing (Azurite) |
@@ -90,7 +94,7 @@ Presets combine tooling levels and best practices:
 pip install azure-functions-scaffold
 
 # Step 2: Create project
-afs api new my-api
+afs new my-api
 
 # Step 3: Install dependencies
 cd my-api
@@ -106,7 +110,7 @@ func start
 
 Intent commands auto-select features based on project goal:
 
-- `afs api new <name>` automatically enables OpenAPI, validation, and doctor
+- `afs new <name>` (or `afs api new <name>`) automatically enables OpenAPI, validation, and doctor
 - `afs worker <trigger> <name>` and `afs ai agent <name>` apply trigger-specific defaults
 
 Use `afs advanced new <name>` for explicit feature control:
