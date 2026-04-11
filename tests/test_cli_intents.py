@@ -170,8 +170,11 @@ class TestNew:
         api_dir.mkdir()
         new_dir.mkdir()
 
-        runner.invoke(app, ["api", "new", "proj", "--destination", str(api_dir)])
-        runner.invoke(app, ["new", "proj", "--destination", str(new_dir)])
+        result_api = runner.invoke(app, ["api", "new", "proj", "--destination", str(api_dir)])
+        result_new = runner.invoke(app, ["new", "proj", "--destination", str(new_dir)])
+
+        assert result_api.exit_code == 0, result_api.stdout
+        assert result_new.exit_code == 0, result_new.stdout
 
         api_files = sorted(
             str(p.relative_to(api_dir / "proj"))
