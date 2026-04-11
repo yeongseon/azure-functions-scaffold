@@ -156,4 +156,51 @@ def run_scaffold(
         typer.secho(str(exc), fg=typer.colors.RED)
         raise typer.Exit(code=1) from exc
 
-    typer.echo(f"Created project at {project_path}")
+    _print_success_message(project_path, template_name, options)
+
+
+def _print_success_message(
+    project_path: Path,
+    template_name: str,
+    options: ProjectOptions,
+) -> None:
+    """Print a rich post-scaffold landing message with next steps."""
+    typer.secho("\n  Project created successfully!\n", fg=typer.colors.GREEN, bold=True)
+
+    typer.echo(f"  Location:  {project_path}")
+    typer.echo(f"  Template:  {template_name}")
+    typer.echo(f"  Preset:    {options.preset_name}")
+    typer.echo(f"  Python:    {options.python_version}")
+
+    # Feature badges
+    features: list[str] = []
+    if options.include_openapi:
+        features.append("openapi")
+    if options.include_validation:
+        features.append("validation")
+    if options.include_doctor:
+        features.append("doctor")
+    if options.include_db:
+        features.append("db")
+    if options.include_azd:
+        features.append("azd")
+    if options.include_github_actions:
+        features.append("github-actions")
+    if features:
+        typer.echo(f"  Features:  {', '.join(features)}")
+
+    # Next steps
+    typer.echo("")
+    typer.secho("  Next steps:", bold=True)
+    typer.echo(f"    cd {project_path}")
+    typer.echo("    python -m venv .venv")
+    typer.echo("    source .venv/bin/activate   # Linux/macOS")
+    typer.echo("    .venv\\Scripts\\activate      # Windows")
+    dev_extra = "[dev]" if options.tooling else ""
+    typer.echo(f"    pip install -e .{dev_extra}")
+    typer.echo("    func start")
+    if options.include_openapi:
+        typer.echo("")
+        typer.secho("  API docs:", bold=True)
+        typer.echo("    http://localhost:7071/api/docs")
+    typer.echo("")

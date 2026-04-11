@@ -31,9 +31,9 @@ class TestApiNew:
         http_text = (project_dir / "app/functions/http.py").read_text(encoding="utf-8")
         makefile_text = (project_dir / "Makefile").read_text(encoding="utf-8")
         # api intent: strict preset + openapi + validation + doctor
-        assert "azure-functions-openapi>=0.13.0" in pyproject_text
-        assert "azure-functions-validation>=0.5.0" in pyproject_text
-        assert "azure-functions-doctor>=0.15.0" in pyproject_text
+        assert "azure-functions-openapi>=0.17.0" in pyproject_text
+        assert "azure-functions-validation>=0.7.0" in pyproject_text
+        assert "azure-functions-doctor>=0.16.0" in pyproject_text
         assert "mypy>=1.17.1" in pyproject_text  # strict preset
         assert "@openapi(" in http_text
         assert "@validate_http(" in http_text
@@ -100,10 +100,10 @@ class TestApiCrud:
         pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
         function_app_text = (project_dir / "function_app.py").read_text(encoding="utf-8")
         # crud = api + db
-        assert "azure-functions-openapi>=0.13.0" in pyproject_text
-        assert "azure-functions-validation>=0.5.0" in pyproject_text
-        assert "azure-functions-doctor>=0.15.0" in pyproject_text
-        assert "azure-functions-db[postgres]>=0.1.0" in pyproject_text
+        assert "azure-functions-openapi>=0.17.0" in pyproject_text
+        assert "azure-functions-validation>=0.7.0" in pyproject_text
+        assert "azure-functions-doctor>=0.16.0" in pyproject_text
+        assert "azure-functions-db[postgres]>=0.2.0" in pyproject_text
         assert "mypy>=1.17.1" in pyproject_text
         assert (project_dir / "app/functions/db_items.py").exists()
         assert "db_items_blueprint" in function_app_text
@@ -226,7 +226,7 @@ class TestAiAgent:
         pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
         assert (project_dir / "app/graphs/echo_agent.py").exists()
         assert "LangGraphApp" in function_app_text
-        assert "azure-functions-langgraph>=0.5.0" in pyproject_text
+        assert "azure-functions-langgraph>=0.5.1" in pyproject_text
 
     def test_dry_run(self, tmp_path: Path) -> None:
         result = runner.invoke(
@@ -278,10 +278,10 @@ class TestAdvanced:
         assert result.exit_code == 0
         project_dir = tmp_path / "full-api"
         pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
-        assert "azure-functions-openapi>=0.13.0" in pyproject_text
-        assert "azure-functions-validation>=0.5.0" in pyproject_text
-        assert "azure-functions-doctor>=0.15.0" in pyproject_text
-        assert "azure-functions-db[postgres]>=0.1.0" in pyproject_text
+        assert "azure-functions-openapi>=0.17.0" in pyproject_text
+        assert "azure-functions-validation>=0.7.0" in pyproject_text
+        assert "azure-functions-doctor>=0.16.0" in pyproject_text
+        assert "azure-functions-db[postgres]>=0.2.0" in pyproject_text
         assert (project_dir / "azure.yaml").exists()
 
     def test_new_dry_run(self, tmp_path: Path) -> None:
@@ -427,3 +427,42 @@ class TestErrorPaths:
         )
         assert result.exit_code == 1
         assert "Unknown template" in result.stdout
+
+
+class TestSuccessMessage:
+    """Verify the post-scaffold landing message content."""
+
+    def test_success_message_shows_project_info(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["api", "new", "msg-test", "--destination", str(tmp_path)])
+        assert result.exit_code == 0
+        assert "Project created successfully" in result.stdout
+        assert "Template:  http" in result.stdout
+        assert "Preset:    strict" in result.stdout
+        assert "Features:" in result.stdout
+        assert "openapi" in result.stdout
+
+    def test_success_message_shows_full_path_in_cd(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["api", "new", "cd-test", "--destination", str(tmp_path)])
+        assert result.exit_code == 0
+        # Must show the full project path, not just the project name
+        expected_path = str(tmp_path / "cd-test")
+        assert f"cd {expected_path}" in result.stdout
+
+    def test_success_message_shows_platform_aware_activate(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["api", "new", "act-test", "--destination", str(tmp_path)])
+        assert result.exit_code == 0
+        assert "source .venv/bin/activate" in result.stdout
+        assert ".venv\\Scripts\\activate" in result.stdout
+
+    def test_success_message_shows_openapi_docs_url(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["api", "new", "docs-test", "--destination", str(tmp_path)])
+        assert result.exit_code == 0
+        assert "http://localhost:7071/api/docs" in result.stdout
+
+    def test_success_message_omits_openapi_url_for_worker(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app, ["worker", "timer", "timer-test", "--destination", str(tmp_path)]
+        )
+        assert result.exit_code == 0
+        assert "Project created successfully" in result.stdout
+        assert "http://localhost:7071/api/docs" not in result.stdout
