@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import importlib
 from pathlib import Path
+import subprocess
 import sys
 from typing import Callable, cast
 
@@ -153,3 +154,77 @@ def test_scaffolded_pyproject_sdist_includes_do_not_use_leading_slashes(
     pyproject_data = _load_pyproject(project_root)
     sdist_includes = _get_sdist_includes(pyproject_data)
     assert all(not path.startswith("/") for path in sdist_includes)
+
+
+@pytest.mark.slow
+def test_rendered_strict_http_project_tests_pass(tmp_path: Path) -> None:
+    """Scaffold a strict HTTP project and run its generated tests."""
+    options = build_project_options(
+        preset_name="strict",
+        python_version="3.10",
+        include_github_actions=False,
+        initialize_git=False,
+        include_openapi=True,
+        include_validation=True,
+        include_doctor=True,
+    )
+    project_root = scaffold_project(
+        project_name="smoke-strict",
+        destination=tmp_path,
+        template_name="http",
+        options=options,
+    )
+
+    # Run the generated project's own tests using the current interpreter.
+    # All runtime deps (azure-functions, pydantic, etc.) are already installed.
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", "-x", "-q", str(project_root / "tests")],
+        cwd=str(project_root),
+        capture_output=True,
+        text=True,
+        env={
+            **dict(__import__("os").environ),
+            "PYTHONPATH": str(project_root),
+        },
+    )
+    assert result.returncode == 0, (
+        f"Generated project tests failed (rc={result.returncode}):\n"
+        f"stdout:\n{result.stdout}\n"
+        f"stderr:\n{result.stderr}"
+    )
+
+
+@pytest.mark.slow
+def test_rendered_standard_http_project_tests_pass(tmp_path: Path) -> None:
+    """Scaffold a standard HTTP project (no openapi/validation) and run its generated tests."""
+    options = build_project_options(
+        preset_name="standard",
+        python_version="3.10",
+        include_github_actions=False,
+        initialize_git=False,
+        include_openapi=False,
+        include_validation=False,
+        include_doctor=False,
+    )
+    project_root = scaffold_project(
+        project_name="smoke-standard",
+        destination=tmp_path,
+        template_name="http",
+        options=options,
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", "-x", "-q", str(project_root / "tests")],
+        cwd=str(project_root),
+        capture_output=True,
+        text=True,
+        env={
+            **dict(__import__("os").environ),
+            "PYTHONPATH": str(project_root),
+        },
+    )
+    assert result.returncode == 0, (
+        f"Generated project tests failed (rc={result.returncode}):\n"
+        f"stdout:\n{result.stdout}\n"
+        f"stderr:\n{result.stderr}"
+    )

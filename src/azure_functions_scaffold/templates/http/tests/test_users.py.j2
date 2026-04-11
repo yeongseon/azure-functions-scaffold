@@ -4,7 +4,7 @@ import json
 
 import azure.functions as func
 
-from app.functions.users import create_user, delete_user, get_user, list_users
+from app.functions.users import create_user, delete_user, get_user, list_users, update_user
 from app.services.users_service import users_store
 
 
@@ -94,6 +94,53 @@ class TestCreateUser:
         assert body["email"] == "carol@example.com"
         assert "id" in body
 
+class TestUpdateUser:
+    def test_updates_existing_user(self) -> None:
+        users_store._users.clear()
+        user = users_store.create("Eve", "eve@example.com")
+
+        request = _make_request(
+            "PUT",
+            f"http://localhost/api/users/{user['id']}",
+            body=json.dumps({"name": "Eve Updated", "email": "eve2@example.com"}).encode(),
+            route_params={"user_id": user["id"]},
+            headers={"Content-Type": "application/json"},
+        )
+        response = update_user(request)
+
+        assert response.status_code == 200
+        body = json.loads(response.get_body())
+        assert body["name"] == "Eve Updated"
+        assert body["email"] == "eve2@example.com"
+
+    def test_returns_404_for_unknown_id(self) -> None:
+        users_store._users.clear()
+
+        request = _make_request(
+            "PUT",
+            "http://localhost/api/users/unknown",
+            body=json.dumps({"name": "Ghost", "email": "ghost@example.com"}).encode(),
+            route_params={"user_id": "unknown"},
+            headers={"Content-Type": "application/json"},
+        )
+        response = update_user(request)
+
+        assert response.status_code == 404
+
+    def test_returns_400_for_invalid_json(self) -> None:
+        users_store._users.clear()
+        user = users_store.create("Frank", "frank@example.com")
+
+        request = _make_request(
+            "PUT",
+            f"http://localhost/api/users/{user['id']}",
+            body=b"not-json",
+            route_params={"user_id": user["id"]},
+            headers={"Content-Type": "application/json"},
+        )
+        response = update_user(request)
+
+        assert response.status_code == 400
 
 class TestDeleteUser:
     def test_deletes_existing_user(self) -> None:

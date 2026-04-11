@@ -22,6 +22,11 @@ users_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
 # GET /api/users — list all users
 # ---------------------------------------------------------------------------
 
+@users_blueprint.route(
+    route="users",
+    methods=["GET"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
 {% if include_openapi -%}
 @openapi(
     summary="List users",
@@ -29,11 +34,6 @@ users_blueprint = func.Blueprint()  # type: ignore[no-untyped-call]
     tags=["users"],
 )
 {% endif -%}
-@users_blueprint.route(
-    route="users",
-    methods=["GET"],
-    auth_level=func.AuthLevel.ANONYMOUS,
-)
 def list_users(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(
         body=json.dumps(users_store.list_all()),
@@ -46,6 +46,11 @@ def list_users(req: func.HttpRequest) -> func.HttpResponse:
 # GET /api/users/{user_id} — get a single user
 # ---------------------------------------------------------------------------
 
+@users_blueprint.route(
+    route="users/{user_id}",
+    methods=["GET"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
 {% if include_openapi -%}
 @openapi(
     summary="Get user by ID",
@@ -53,11 +58,6 @@ def list_users(req: func.HttpRequest) -> func.HttpResponse:
     tags=["users"],
 )
 {% endif -%}
-@users_blueprint.route(
-    route="users/{user_id}",
-    methods=["GET"],
-    auth_level=func.AuthLevel.ANONYMOUS,
-)
 def get_user(req: func.HttpRequest) -> func.HttpResponse:
     user_id = req.route_params.get("user_id", "")
     user = users_store.get(user_id)
@@ -78,6 +78,11 @@ def get_user(req: func.HttpRequest) -> func.HttpResponse:
 # POST /api/users — create a new user
 # ---------------------------------------------------------------------------
 
+@users_blueprint.route(
+    route="users",
+    methods=["POST"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
 {% if include_openapi -%}
 @openapi(
     summary="Create user",
@@ -92,15 +97,14 @@ def get_user(req: func.HttpRequest) -> func.HttpResponse:
 {% if include_validation -%}
 @validate_http(body=CreateUserRequest, response_model=UserResponse)
 {% endif -%}
-@users_blueprint.route(
-    route="users",
-    methods=["POST"],
-    auth_level=func.AuthLevel.ANONYMOUS,
-)
 {% if include_validation -%}
 def create_user(req: func.HttpRequest, body: CreateUserRequest) -> UserResponse:
     user = users_store.create(body.name, body.email)
-    return UserResponse(**user)
+    return func.HttpResponse(
+        body=UserResponse(**user).model_dump_json(),
+        mimetype="application/json",
+        status_code=201,
+    )
 {%- else -%}
 def create_user(req: func.HttpRequest) -> func.HttpResponse:
     try:
@@ -132,6 +136,11 @@ def create_user(req: func.HttpRequest) -> func.HttpResponse:
 # PUT /api/users/{user_id} — update an existing user
 # ---------------------------------------------------------------------------
 
+@users_blueprint.route(
+    route="users/{user_id}",
+    methods=["PUT"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
 {% if include_openapi -%}
 @openapi(
     summary="Update user",
@@ -146,17 +155,12 @@ def create_user(req: func.HttpRequest) -> func.HttpResponse:
 {% if include_validation -%}
 @validate_http(body=UpdateUserRequest, response_model=UserResponse)
 {% endif -%}
-@users_blueprint.route(
-    route="users/{user_id}",
-    methods=["PUT"],
-    auth_level=func.AuthLevel.ANONYMOUS,
-)
 {% if include_validation -%}
 def update_user(req: func.HttpRequest, body: UpdateUserRequest) -> UserResponse:
     user_id = req.route_params.get("user_id", "")
     user = users_store.update(user_id, name=body.name, email=body.email)
     if user is None:
-        raise func.HttpResponse(
+        return func.HttpResponse(
             body=json.dumps({"error": "User not found"}),
             mimetype="application/json",
             status_code=404,
@@ -192,6 +196,11 @@ def update_user(req: func.HttpRequest) -> func.HttpResponse:
 # DELETE /api/users/{user_id} — delete a user
 # ---------------------------------------------------------------------------
 
+@users_blueprint.route(
+    route="users/{user_id}",
+    methods=["DELETE"],
+    auth_level=func.AuthLevel.ANONYMOUS,
+)
 {% if include_openapi -%}
 @openapi(
     summary="Delete user",
@@ -199,11 +208,6 @@ def update_user(req: func.HttpRequest) -> func.HttpResponse:
     tags=["users"],
 )
 {% endif -%}
-@users_blueprint.route(
-    route="users/{user_id}",
-    methods=["DELETE"],
-    auth_level=func.AuthLevel.ANONYMOUS,
-)
 def delete_user(req: func.HttpRequest) -> func.HttpResponse:
     user_id = req.route_params.get("user_id", "")
     deleted = users_store.delete(user_id)
