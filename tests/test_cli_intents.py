@@ -94,6 +94,101 @@ class TestApiNew:
 
 
 # ---------------------------------------------------------------------------
+# afs new (top-level alias for afs api new)
+# ---------------------------------------------------------------------------
+
+
+class TestNew:
+    """Tests for `afs new` — the top-level shortcut for `afs api new`."""
+
+    def test_creates_api_project(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["new", "my-api", "--destination", str(tmp_path)])
+
+        assert result.exit_code == 0
+
+        project_dir = tmp_path / "my-api"
+        assert project_dir.exists()
+        pyproject_text = (project_dir / "pyproject.toml").read_text(encoding="utf-8")
+        function_app_text = (project_dir / "function_app.py").read_text(encoding="utf-8")
+        # Same defaults as afs api new: strict + openapi + validation + doctor
+        assert "azure-functions-openapi>=0.17.0" in pyproject_text
+        assert "azure-functions-validation>=0.7.0" in pyproject_text
+        assert "azure-functions-doctor>=0.16.0" in pyproject_text
+        assert "mypy>=1.17.1" in pyproject_text  # strict preset
+        assert (project_dir / "app/functions/health.py").exists()
+        assert (project_dir / "app/functions/users.py").exists()
+        assert "health_blueprint" in function_app_text
+        assert "users_blueprint" in function_app_text
+
+    def test_dry_run(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app, ["new", "dry-api", "--destination", str(tmp_path), "--dry-run"]
+        )
+        assert result.exit_code == 0
+        assert "Dry run: create project at" in result.stdout
+        assert not (tmp_path / "dry-api").exists()
+
+    def test_overwrite(self, tmp_path: Path) -> None:
+        project_dir = tmp_path / "my-api"
+        project_dir.mkdir()
+        (project_dir / "stale.txt").write_text("stale", encoding="utf-8")
+
+        result = runner.invoke(
+            app, ["new", "my-api", "--destination", str(tmp_path), "--overwrite"]
+        )
+        assert result.exit_code == 0
+        assert not (project_dir / "stale.txt").exists()
+        assert (project_dir / "function_app.py").exists()
+
+    def test_with_azd_flag(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app, ["new", "azd-api", "--destination", str(tmp_path), "--azd"]
+        )
+        assert result.exit_code == 0
+        assert (tmp_path / "azd-api" / "azure.yaml").exists()
+
+    def test_custom_python_version(self, tmp_path: Path) -> None:
+        result = runner.invoke(
+            app,
+            [
+                "new",
+                "py312-api",
+                "--destination",
+                str(tmp_path),
+                "--python-version",
+                "3.12",
+            ],
+        )
+        assert result.exit_code == 0
+        pyproject_text = (tmp_path / "py312-api" / "pyproject.toml").read_text(encoding="utf-8")
+        assert 'requires-python = ">=3.12,<3.13"' in pyproject_text
+
+    def test_produces_same_output_as_api_new(self, tmp_path: Path) -> None:
+        """Verify `afs new` and `afs api new` generate identical project structures."""
+        api_dir = tmp_path / "via-api"
+        new_dir = tmp_path / "via-new"
+        api_dir.mkdir()
+        new_dir.mkdir()
+
+        result_api = runner.invoke(app, ["api", "new", "proj", "--destination", str(api_dir)])
+        result_new = runner.invoke(app, ["new", "proj", "--destination", str(new_dir)])
+
+        assert result_api.exit_code == 0, result_api.stdout
+        assert result_new.exit_code == 0, result_new.stdout
+
+        api_files = sorted(
+            str(p.relative_to(api_dir / "proj"))
+            for p in (api_dir / "proj").rglob("*")
+            if p.is_file()
+        )
+        new_files = sorted(
+            str(p.relative_to(new_dir / "proj"))
+            for p in (new_dir / "proj").rglob("*")
+            if p.is_file()
+        )
+        assert api_files == new_files
+
+# ---------------------------------------------------------------------------
 # afs api add
 # ---------------------------------------------------------------------------
 
@@ -468,11 +563,6 @@ class TestAdvancedAddResource:
 
 
 class TestLegacyRemoved:
-    def test_legacy_new_command_not_available(self) -> None:
-        result = runner.invoke(app, ["new", "my-api"])
-        assert result.exit_code != 0
-        assert "No such command" in result.stdout or "No such command" in (result.stderr or "")
-
     def test_legacy_add_command_not_available(self) -> None:
         result = runner.invoke(app, ["add", "http", "get-user"])
         assert result.exit_code != 0

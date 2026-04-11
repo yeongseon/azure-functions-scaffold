@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -8,6 +9,16 @@ from azure_functions_scaffold import __version__
 from azure_functions_scaffold.cli_advanced import advanced_app
 from azure_functions_scaffold.cli_ai import ai_app
 from azure_functions_scaffold.cli_api import api_app
+from azure_functions_scaffold.cli_common import (
+    AzdOption,
+    DestinationOption,
+    DryRunOption,
+    GithubActionsOption,
+    GitOption,
+    OverwriteOption,
+    PythonVersionOption,
+    run_intent,
+)
 from azure_functions_scaffold.cli_worker import worker_app
 from azure_functions_scaffold.template_registry import list_presets, list_templates
 
@@ -56,6 +67,31 @@ def show_presets() -> None:
     for preset in list_presets():
         tooling = ", ".join(preset.tooling) or "none"
         typer.echo(f"{preset.name}: {preset.description} [tooling: {tooling}]")
+
+
+@app.command("new")
+def new(
+    project_name: str = typer.Argument(..., help="Directory name for the new project."),
+    destination: DestinationOption = Path("."),
+    python_version: PythonVersionOption = "3.10",
+    include_github_actions: GithubActionsOption = False,
+    initialize_git: GitOption = False,
+    include_azd: AzdOption = False,
+    dry_run: DryRunOption = False,
+    overwrite: OverwriteOption = False,
+) -> None:
+    """Create a new API project (shortcut for 'afs api new')."""
+    run_intent(
+        "api/new",
+        project_name,
+        destination=destination,
+        python_version=python_version,
+        include_github_actions=include_github_actions,
+        initialize_git=initialize_git,
+        include_azd=include_azd,
+        dry_run=dry_run,
+        overwrite=overwrite,
+    )
 
 
 def main() -> None:

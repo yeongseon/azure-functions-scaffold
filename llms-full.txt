@@ -37,8 +37,22 @@ Root options:
 - `-h`, `--help` — Show help
 
 Top-level utility commands:
+- `afs new <project_name>` — **Shortcut** to create an API project (delegates to `afs api new`)
 - `afs templates` — List available scaffold templates
 - `afs presets` — List available project presets
+
+#### `afs new <project_name>` (top-level shortcut)
+
+Create an HTTP API project with production defaults. This is a shortcut for `afs api new`.
+
+```bash
+afs new <project_name> [OPTIONS]
+```
+
+Arguments:
+- `project_name` (required) — Directory name for the new project
+
+Options: Same as `afs api new` (see below).
 
 ### Subcommand Group: `api`
 
@@ -68,7 +82,6 @@ Options:
 - `--overwrite` (default: `False`)
 
 #### `afs api add <function_name>`
-#### `afs api add <function_name>`
 
 Add an HTTP function module to an existing scaffolded project.
 
@@ -83,6 +96,35 @@ Options:
 - `--project-root PATH` (default: `.`)
 - `--dry-run` (default: `False`)
 
+#### `afs api add-route <route_name>`
+
+Add a simple HTTP route (blueprint + test) to an existing scaffolded project.
+
+```bash
+afs api add-route <route_name> [OPTIONS]
+```
+
+Arguments:
+- `route_name` (required) — Route name to add
+
+Options:
+- `--project-root PATH` (default: `.`)
+- `--dry-run` (default: `False`)
+
+#### `afs api add-resource <resource_name>`
+
+Add a full CRUD resource (blueprint, service, schema, test) to an existing scaffolded project.
+
+```bash
+afs api add-resource <resource_name> [OPTIONS]
+```
+
+Arguments:
+- `resource_name` (required) — Resource name to add (e.g. products)
+
+Options:
+- `--project-root PATH` (default: `.`)
+- `--dry-run` (default: `False`)
 ### Subcommand Group: `worker`
 
 Purpose: intent-based worker scaffolding for non-HTTP triggers.
@@ -200,26 +242,48 @@ Alias command under advanced group to list presets.
 afs advanced presets
 ```
 
+#### `afs advanced add-route <route_name>`
+
+Add a simple HTTP route to an existing scaffolded project (advanced group).
+
+```bash
+afs advanced add-route <route_name> [OPTIONS]
+```
+
+Arguments:
+- `route_name` (required) — Route name to add
+
+Options:
+- `--project-root PATH` (default: `.`)
+- `--dry-run` (default: `False`)
+
+#### `afs advanced add-resource <resource_name>`
+
+Add a full CRUD resource (blueprint, service, schema, test) to an existing scaffolded project (advanced group).
+
+```bash
+afs advanced add-resource <resource_name> [OPTIONS]
+```
+
+Arguments:
+- `resource_name` (required) — Resource name to add (e.g. products)
+
+Options:
+- `--project-root PATH` (default: `.`)
+- `--dry-run` (default: `False`)
+
 ## Common Workflows
 
 ### Workflow 1: API project with strict defaults
 
 ```bash
-afs api new my-api
+afs new my-api
 cd my-api
 pip install -e .
 func start
 ```
 
-This intent command replaces the old explicit flag-heavy pattern:
-
-```bash
-# before (manual feature composition)
-afs advanced new my-api --preset strict --with-openapi --with-validation
-
-# now (intent auto-selects features)
-afs api new my-api
-```
+The top-level `afs new` is the fastest way to start. Equivalent to `afs api new`.
 
 ### Workflow 2: Worker project by trigger intent
 ### Workflow 3: Worker project by trigger intent
@@ -236,18 +300,25 @@ Use trigger-specific worker intents instead of manually selecting templates.
 
 ```bash
 cd my-api
+# Add a simple route
+afs api add-route status
+# Add a full CRUD resource
+afs api add-resource products
+# Add HTTP function
 afs api add get_orders
+# Add non-HTTP triggers
 afs advanced add queue sync_jobs
 afs advanced add servicebus process_events
 ```
 
-Use `api add` for HTTP endpoints and `advanced add` for any trigger type.
+Use `api add-route` for simple endpoints, `api add-resource` for full CRUD, and `advanced add` for non-HTTP triggers.
 
 ### Workflow 5: Dry run preview
 
 ```bash
-afs api new my-api --dry-run
+afs new my-api --dry-run
 afs advanced new my-custom --template durable --dry-run
+afs api add-resource products --project-root ./my-api --dry-run
 afs advanced add blob ingest_reports --project-root ./my-api --dry-run
 ```
 
@@ -334,9 +405,11 @@ Copy to `local.settings.json` and adjust connection values for local development
 ## Tips for LLM Integration
 
 - This package is a CLI-first scaffold generator
+- Use `afs new my-api` as the fastest way to create a project
 - Prefer intent commands (`api`, `worker`, `ai`) for default best-practice setups
 - Use `advanced` commands only when direct template/feature control is required
 - Use `--dry-run` to inspect planned file operations before writing
-- `afs api new my-api` already includes strict API defaults; do not add manual strict/OpenAPI/validation flags unless you intentionally switch to `afs advanced new`
+- `afs new my-api` (or `afs api new my-api`) already includes strict API defaults; do not add manual strict/OpenAPI/validation flags unless you intentionally switch to `afs advanced new`
+- Use `afs api add-route` for lightweight endpoints and `afs api add-resource` for full CRUD expansion
 - Generated projects keep business logic in `app/services` and trigger bindings in `app/functions`
 - Project configuration is centered in `pyproject.toml` and `host.json`

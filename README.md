@@ -21,7 +21,7 @@ Starting a new Azure Functions project means setting up boilerplate: `host.json`
 ```mermaid
 flowchart LR
     Dev(["Developer"])
-    CLI["afs api new my-api"]
+    CLI["afs new my-api"]
     T["Templates"]
     P["Generated Project"]
     VAL["azure-functions-validation"]
@@ -52,11 +52,12 @@ This package does not own:
 
 ## Features
 
+- Top-level shortcut: `afs new` creates an API project with production defaults
 - Intent-based command groups: `afs api`, `afs worker`, `afs ai`, and `afs advanced`
-- API project commands: `afs api new` and `afs api add`
+- API project commands: `afs api new`, `afs api add`, `afs api add-route`, and `afs api add-resource`
 - Worker project commands: `afs worker timer|queue|blob|servicebus|eventhub`
 - AI project command: `afs ai agent` for LangGraph scaffolds
-- Advanced power-user commands: `afs advanced new` and `afs advanced add`
+- Advanced power-user commands: `afs advanced new`, `afs advanced add`, `afs advanced add-route`, and `afs advanced add-resource`
 - Optional feature flags (`--with-openapi`, `--with-validation`, `--with-doctor`) and `--preset minimal|standard|strict` available via `afs advanced new`
 - Discovery commands: `afs templates` and `afs presets`
 - Short alias: `afs` is the primary CLI entry point for `azure-functions-scaffold`
@@ -77,7 +78,7 @@ Use this 4-step flow to create and run a local HTTP function:
 4. Start the local Functions runtime.
 
 ```bash
-afs api new my-api
+afs new my-api
 cd my-api
 pip install -e .
 func start
@@ -137,7 +138,7 @@ Why this layout works:
 
 | Template | Command | Use Case |
 | --- | --- | --- |
-| http | `afs api new my-api` | REST APIs, webhooks |
+| http | `afs new my-api` | REST APIs, webhooks |
 | timer | `afs worker timer my-job` | Scheduled tasks, cron |
 | queue | `afs worker queue my-worker` | Message processing (Azurite) |
 | blob | `afs worker blob my-blob` | File processing (Azurite) |
@@ -158,7 +159,7 @@ Template defaults:
 
 Intent commands pre-select optional features based on project intent:
 
-- `afs api new <name>` includes OpenAPI, validation, and doctor integration
+- `afs api new <name>` (or `afs new <name>`) includes OpenAPI, validation, and doctor integration
 - `afs worker <trigger> <name>` and `afs ai agent <name>` apply trigger-specific defaults
 
 Use `afs advanced new <name>` when you need direct control over feature flags:
@@ -168,12 +169,36 @@ Use `afs advanced new <name>` when you need direct control over feature flags:
 - `--with-doctor` - Health check diagnostics
 - `--with-db` - Database bindings (SQLAlchemy) *(planned — currently not wired)*
 - `--preset minimal|standard|strict` - Tooling level
+
 ## Expand Your Project
 
-Add functions to an existing scaffolded project:
+### Add a route
+
+Add a lightweight HTTP endpoint (blueprint + test):
+
+```bash
+afs api add-route status --project-root ./my-api
+```
+
+### Add a resource
+
+Add a full CRUD resource with blueprint, service, schema, and test:
+
+```bash
+afs api add-resource products --project-root ./my-api
+```
+
+### Add a function
+
+Add a single HTTP function module:
 
 ```bash
 afs api add get-user --project-root ./my-api
+```
+
+### Add non-HTTP triggers
+
+```bash
 afs advanced add timer cleanup --project-root ./my-api
 afs advanced add queue sync-jobs --project-root ./my-api
 afs advanced add blob ingest-reports --project-root ./my-api
@@ -183,15 +208,16 @@ afs advanced add servicebus process-events --project-root ./my-api
 Preview additions before writing files:
 
 ```bash
-afs advanced add servicebus process-events --project-root ./my-api --dry-run
+afs api add-resource products --project-root ./my-api --dry-run
 ```
 
 Common expansion flow:
 
-1. Add API endpoints with `afs api add <name>` or non-HTTP triggers with `afs advanced add <trigger> <name>`.
-2. Implement business logic under `app/services`.
-3. Update contracts in `app/schemas` if needed.
-4. Add or update tests in `tests`.
+1. Add API endpoints with `afs api add-route <name>` for simple routes or `afs api add-resource <name>` for full CRUD.
+2. Add non-HTTP triggers with `afs advanced add <trigger> <name>`.
+3. Implement business logic under `app/services`.
+4. Update contracts in `app/schemas` if needed.
+5. Add or update tests in `tests`.
 
 ## Deploy
 
