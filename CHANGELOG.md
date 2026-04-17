@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add `langgraph` template with LangGraphApp, echo agent, and full project structure
 - Add `db-api` profile (http + strict preset + db + openapi + validation + doctor)
 - Add `db_items` blueprint template (GET/POST /items) for database showcase
-- Conditional `azure-functions-db[postgres]` dependency in generated pyproject.toml
+- Conditional `azure-functions-db-python[postgres]` dependency in generated pyproject.toml
 - Conditional `DB_URL` in generated local.settings.json.example
 
 ### Testing
@@ -77,7 +77,7 @@ All notable changes to this project will be documented in this file.
 - Add mermaid diagrams to architecture and README 
 - Add mermaid support to mkdocs configuration 
 - Add real Azure e2e test section to testing.md and CHANGELOG 
-- Document azure-functions-logging as built-in default 
+- Document azure-functions-logging-python as built-in default 
 
 ### Features
 
@@ -132,7 +132,7 @@ All notable changes to this project will be documented in this file.
 ### Features
 
 - Add --with-doctor flag and conditional Makefile target 
-- Integrate azure-functions-logging into all scaffold templates 
+- Integrate azure-functions-logging-python into all scaffold templates 
 - Add --with-openapi and --with-validation flags to new command 
 - Add explicit overwrite support for project generation 
 - Validate interactive scaffold choices before generation 

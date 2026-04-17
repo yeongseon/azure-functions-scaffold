@@ -1,4 +1,4 @@
-"""Tests for the public API surface of azure-functions-scaffold."""
+"""Tests for the public API surface of azure-functions-scaffold-python."""
 
 from importlib import import_module
 from typing import Protocol, cast

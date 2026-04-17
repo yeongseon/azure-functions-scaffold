@@ -1,6 +1,6 @@
 # Development Environment
 
-This guide explains how to set up your local environment for developing azure-functions-scaffold.
+This guide explains how to set up your local environment for developing azure-functions-scaffold-python.
 
 ## Prerequisites
 
@@ -15,8 +15,8 @@ Ensure you have the following installed on your system:
 
 1. Fork and clone the repository:
    ```bash
-   git clone https://github.com/your-username/azure-functions-scaffold.git
-   cd azure-functions-scaffold
+   git clone https://github.com/your-username/azure-functions-scaffold-python.git
+   cd azure-functions-scaffold-python
    ```
 
 2. Initialize the development environment:

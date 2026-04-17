@@ -1,13 +1,13 @@
 # Azure Functions Scaffold
 
-[![PyPI](https://img.shields.io/pypi/v/azure-functions-scaffold.svg)](https://pypi.org/project/azure-functions-scaffold/)
-[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/azure-functions-scaffold/)
-[![CI](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/ci-test.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/ci-test.yml)
-[![Release](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/release.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/release.yml)
-[![Security Scans](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/security.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold/actions/workflows/security.yml)
-[![codecov](https://codecov.io/gh/yeongseon/azure-functions-scaffold/branch/main/graph/badge.svg)](https://codecov.io/gh/yeongseon/azure-functions-scaffold)
+[![PyPI](https://img.shields.io/pypi/v/azure-functions-scaffold-python.svg)](https://pypi.org/project/azure-functions-scaffold-python/)
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/azure-functions-scaffold-python/)
+[![CI](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/ci-test.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/ci-test.yml)
+[![Release](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/release.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/release.yml)
+[![Security Scans](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/security.yml/badge.svg)](https://github.com/yeongseon/azure-functions-scaffold-python/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/yeongseon/azure-functions-scaffold-python/branch/main/graph/badge.svg)](https://codecov.io/gh/yeongseon/azure-functions-scaffold-python)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://pre-commit.com/)
-[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://yeongseon.github.io/azure-functions-scaffold/)
+[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://yeongseon.github.io/azure-functions-scaffold-python/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Read this in: [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
@@ -16,7 +16,7 @@ Scaffolding CLI for production-ready Azure Functions Python v2 projects.
 
 ## Why Use It
 
-Starting a new Azure Functions project means setting up boilerplate: `host.json`, `function_app.py`, directory structure, tooling config, and tests. `azure-functions-scaffold` generates a production-ready project layout in one command, so you can focus on business logic from the start.
+Starting a new Azure Functions project means setting up boilerplate: `host.json`, `function_app.py`, directory structure, tooling config, and tests. `azure-functions-scaffold-python` generates a production-ready project layout in one command, so you can focus on business logic from the start.
 
 ```mermaid
 flowchart LR
@@ -24,7 +24,7 @@ flowchart LR
     CLI["afs new my-api"]
     T["Templates"]
     P["Generated Project"]
-    VAL["azure-functions-validation"]
+    VAL["azure-functions-validation-python"]
 
     Dev --> CLI
     CLI --> T
@@ -46,9 +46,9 @@ This tool generates project scaffolds. It does **not** provide runtime libraries
 This package does not own:
 
 - **Runtime behavior** — intent commands choose optional package wiring during generation, but runtime logic belongs to those packages
-- **API documentation** — use [`azure-functions-openapi`](https://github.com/yeongseon/azure-functions-openapi) for API documentation and spec generation
-- **Request validation** — use [`azure-functions-validation`](https://github.com/yeongseon/azure-functions-validation) for request/response validation and serialization
-- **Database bindings** — use [`azure-functions-db`](https://github.com/yeongseon/azure-functions-db) for database input/output bindings
+- **API documentation** — use [`azure-functions-openapi-python`](https://github.com/yeongseon/azure-functions-openapi-python) for API documentation and spec generation
+- **Request validation** — use [`azure-functions-validation-python`](https://github.com/yeongseon/azure-functions-validation-python) for request/response validation and serialization
+- **Database bindings** — use [`azure-functions-db-python`](https://github.com/yeongseon/azure-functions-db-python) for database input/output bindings
 
 ## Features
 
@@ -60,12 +60,12 @@ This package does not own:
 - Advanced power-user commands: `afs advanced new`, `afs advanced add`, `afs advanced add-route`, and `afs advanced add-resource`
 - Optional feature flags (`--with-openapi`, `--with-validation`, `--with-doctor`) and `--preset minimal|standard|strict` available via `afs advanced new`
 - Discovery commands: `afs templates` and `afs presets`
-- Short alias: `afs` is the primary CLI entry point for `azure-functions-scaffold`
+- Short alias: `afs` is the primary CLI entry point for `azure-functions-scaffold-python`
 
 ## Installation
 
 ```bash
-pip install azure-functions-scaffold
+pip install azure-functions-scaffold-python
 ```
 
 ## Quick Start
@@ -145,7 +145,7 @@ Why this layout works:
 | servicebus | `afs worker servicebus my-bus` | Enterprise messaging |
 | langgraph | `afs ai agent my-agent` | LangGraph AI agent deployment |
 
-Note: `afs` is short for `azure-functions-scaffold`. Both work.
+Note: `afs` is short for `azure-functions-scaffold-python`. Both work.
 
 Template defaults:
 
@@ -234,7 +234,7 @@ Before publishing:
 
 ## Documentation
 
-- Full docs: [yeongseon.github.io/azure-functions-scaffold](https://yeongseon.github.io/azure-functions-scaffold/)
+- Full docs: [yeongseon.github.io/azure-functions-scaffold-python](https://yeongseon.github.io/azure-functions-scaffold-python/)
 - Getting Started: [`docs/guide/getting-started.md`](docs/guide/getting-started.md)
 - CLI Reference: [`docs/reference/cli.md`](docs/reference/cli.md)
 - Project Structure: [`docs/guide/project-structure.md`](docs/guide/project-structure.md)
@@ -256,19 +256,19 @@ make build
 
 This package is part of the **Azure Functions Python DX Toolkit**.
 
-**Design principle:** `azure-functions-scaffold` owns project generation and template expansion. It does not provide runtime libraries — runtime behavior belongs to [`azure-functions-openapi`](https://github.com/yeongseon/azure-functions-openapi) (API documentation and spec generation), [`azure-functions-validation`](https://github.com/yeongseon/azure-functions-validation) (request/response validation), and [`azure-functions-langgraph`](https://github.com/yeongseon/azure-functions-langgraph) (LangGraph runtime exposure).
+**Design principle:** `azure-functions-scaffold-python` owns project generation and template expansion. It does not provide runtime libraries — runtime behavior belongs to [`azure-functions-openapi-python`](https://github.com/yeongseon/azure-functions-openapi-python) (API documentation and spec generation), [`azure-functions-validation-python`](https://github.com/yeongseon/azure-functions-validation-python) (request/response validation), and [`azure-functions-langgraph-python`](https://github.com/yeongseon/azure-functions-langgraph-python) (LangGraph runtime exposure).
 
 | Package | Role |
 |---------|------|
-| [azure-functions-openapi](https://github.com/yeongseon/azure-functions-openapi) | OpenAPI spec generation and Swagger UI |
-| [azure-functions-validation](https://github.com/yeongseon/azure-functions-validation) | Request/response validation and serialization |
-| [azure-functions-db](https://github.com/yeongseon/azure-functions-db) | Database bindings for SQL, PostgreSQL, MySQL, SQLite, and Cosmos DB |
-| [azure-functions-langgraph](https://github.com/yeongseon/azure-functions-langgraph) | LangGraph deployment adapter for Azure Functions |
-| **azure-functions-scaffold** | Project scaffolding CLI |
-| [azure-functions-logging](https://github.com/yeongseon/azure-functions-logging) | Structured logging and observability |
-| [azure-functions-doctor](https://github.com/yeongseon/azure-functions-doctor) | Pre-deploy diagnostic CLI |
-| [azure-functions-durable-graph](https://github.com/yeongseon/azure-functions-durable-graph) | Manifest-first graph runtime with Durable Functions *(experimental)* |
-| [azure-functions-python-cookbook](https://github.com/yeongseon/azure-functions-python-cookbook) | Recipes and examples |
+| [azure-functions-openapi-python](https://github.com/yeongseon/azure-functions-openapi-python) | OpenAPI spec generation and Swagger UI |
+| [azure-functions-validation-python](https://github.com/yeongseon/azure-functions-validation-python) | Request/response validation and serialization |
+| [azure-functions-db-python](https://github.com/yeongseon/azure-functions-db-python) | Database bindings for SQL, PostgreSQL, MySQL, SQLite, and Cosmos DB |
+| [azure-functions-langgraph-python](https://github.com/yeongseon/azure-functions-langgraph-python) | LangGraph deployment adapter for Azure Functions |
+| **azure-functions-scaffold-python** | Project scaffolding CLI |
+| [azure-functions-logging-python](https://github.com/yeongseon/azure-functions-logging-python) | Structured logging and observability |
+| [azure-functions-doctor-python](https://github.com/yeongseon/azure-functions-doctor-python) | Pre-deploy diagnostic CLI |
+| [azure-functions-durable-graph-python](https://github.com/yeongseon/azure-functions-durable-graph-python) | Manifest-first graph runtime with Durable Functions *(experimental)* |
+| [azure-functions-cookbook-python](https://github.com/yeongseon/azure-functions-cookbook-python) | Recipes and examples |
 
 ## For AI Coding Assistants
 
@@ -280,8 +280,8 @@ This package includes `llms.txt` and `llms-full.txt` files in the repository roo
 Use these files to provide context to AI coding assistants when working with Azure Functions scaffolding.
 
 Reference:
-- Repository: https://github.com/yeongseon/azure-functions-scaffold
-- Issue: [#40](https://github.com/yeongseon/azure-functions-scaffold/issues/40)
+- Repository: https://github.com/yeongseon/azure-functions-scaffold-python
+- Issue: [#40](https://github.com/yeongseon/azure-functions-scaffold-python/issues/40)
 
 ## Disclaimer
 

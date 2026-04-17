@@ -10,8 +10,8 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from azure_functions_scaffold.errors import ScaffoldError
 from azure_functions_scaffold.template_registry import list_templates
 
-FUNCTION_IMPORT_MARKER = "# azure-functions-scaffold: function imports"
-FUNCTION_REGISTRATION_MARKER = "# azure-functions-scaffold: function registrations"
+FUNCTION_IMPORT_MARKER = "# azure-functions-scaffold-python: function imports"
+FUNCTION_REGISTRATION_MARKER = "# azure-functions-scaffold-python: function registrations"
 SUPPORTED_TRIGGERS = tuple(template.name for template in list_templates())
 PARTIALS_ROOT = Path(__file__).parent / "templates" / "partials"
 logger = logging.getLogger(__name__)

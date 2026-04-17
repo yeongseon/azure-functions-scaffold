@@ -1,5 +1,5 @@
 [project]
-name = "azure-functions-scaffold"
+name = "azure-functions-scaffold-python"
 description = "Scaffolding CLI for Azure Functions Python v2 projects"
 keywords = ["azure-functions", "azure", "python", "v2", "scaffold", "cli", "code-generator", "serverless"]
 authors = [{ name = "Yeongseon Choe", email = "yeongseon.choe@gmail.com" }]
@@ -45,10 +45,10 @@ dev = [
     # Smoke-test deps: generated project runtime packages needed by
     # test_template_smoke.py to run the scaffolded project's own test suite.
     "azure-functions>=1.23.0",
-    "azure-functions-logging>=0.5.0",
-    "azure-functions-openapi>=0.17.0",
-    "azure-functions-validation>=0.7.0",
-    "azure-functions-doctor>=0.16.0",
+    "azure-functions-logging-python>=0.5.0",
+    "azure-functions-openapi-python>=0.17.0",
+    "azure-functions-validation-python>=0.7.0",
+    "azure-functions-doctor-python>=0.16.0",
     "pydantic>=2.0.0",
 ]
 docs = [
@@ -58,13 +58,13 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://yeongseon.github.io/azure-functions-scaffold/"
-Documentation = "https://yeongseon.github.io/azure-functions-scaffold/"
-Repository = "https://github.com/yeongseon/azure-functions-scaffold"
-Issues = "https://github.com/yeongseon/azure-functions-scaffold/issues"
+Homepage = "https://yeongseon.github.io/azure-functions-scaffold-python/"
+Documentation = "https://yeongseon.github.io/azure-functions-scaffold-python/"
+Repository = "https://github.com/yeongseon/azure-functions-scaffold-python"
+Issues = "https://github.com/yeongseon/azure-functions-scaffold-python/issues"
 
 [project.scripts]
-azure-functions-scaffold = "azure_functions_scaffold.cli:app"
+azure-functions-scaffold-python = "azure_functions_scaffold.cli:app"
 afs = "azure_functions_scaffold.cli:app"
 
 [build-system]

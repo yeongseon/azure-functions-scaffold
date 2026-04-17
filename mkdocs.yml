@@ -1,8 +1,8 @@
 site_name: Azure Functions Scaffold
 site_description: Scaffolding CLI for Azure Functions Python v2 projects
 site_author: Yeongseon Choe
-repo_url: https://github.com/yeongseon/azure-functions-scaffold
-site_url: https://yeongseon.github.io/azure-functions-scaffold/
+repo_url: https://github.com/yeongseon/azure-functions-scaffold-python
+site_url: https://yeongseon.github.io/azure-functions-scaffold-python/
 edit_uri: edit/main/docs/
 
 theme:
@@ -81,7 +81,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yeongseon/azure-functions-scaffold
+      link: https://github.com/yeongseon/azure-functions-scaffold-python
   copyright: |
     © 2026 Yeongseon Choe – MIT Licensed
 

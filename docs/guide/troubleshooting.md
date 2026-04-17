@@ -1,7 +1,7 @@
 # Troubleshooting
 
 Use this page to diagnose common CLI and runtime issues for
-`azure-functions-scaffold` projects.
+`azure-functions-scaffold-python` projects.
 
 ## CLI Installation and Execution
 
@@ -20,7 +20,7 @@ Use this page to diagnose common CLI and runtime issues for
 **Fix**
 
 ```bash
-pipx install azure-functions-scaffold
+pipx install azure-functions-scaffold-python
 afs --version
 ```
 

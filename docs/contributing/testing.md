@@ -1,6 +1,6 @@
 # Testing Guide
 
-All changes to azure-functions-scaffold must include tests. We aim for high reliability and 90% or greater test coverage.
+All changes to azure-functions-scaffold-python must include tests. We aim for high reliability and 90% or greater test coverage.
 
 ## Running Tests
 

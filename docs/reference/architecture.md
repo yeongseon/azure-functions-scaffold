@@ -1,6 +1,6 @@
 # Architecture
 
-Internal structure and design principles for `azure-functions-scaffold`.
+Internal structure and design principles for `azure-functions-scaffold-python`.
 
 ## Design Objectives
 
@@ -46,9 +46,9 @@ A CLI tool built with Typer and Jinja2. It provides offline-capable, determinist
 
 ## Public API Boundary
 
-`azure-functions-scaffold` is primarily a CLI tool. The package root exports only `__version__` via `__all__`.
+`azure-functions-scaffold-python` is primarily a CLI tool. The package root exports only `__version__` via `__all__`.
 
-### CLI entry point (`afs` / `azure-functions-scaffold`)
+### CLI entry point (`afs` / `azure-functions-scaffold-python`)
 
 | Command | Description |
 | :--- | :--- |
@@ -227,7 +227,7 @@ The project uses a single domain exception, `ScaffoldError(RuntimeError)`. The C
 
 ### 6. Marker-based function_app.py updates
 
-The `add` command inserts imports and registrations using marker comments (`# azure-functions-scaffold: function imports` / `# azure-functions-scaffold: function registrations`). This avoids AST manipulation while keeping updates predictable.
+The `add` command inserts imports and registrations using marker comments (`# azure-functions-scaffold-python: function imports` / `# azure-functions-scaffold-python: function registrations`). This avoids AST manipulation while keeping updates predictable.
 
 ## Related Documents
 
@@ -246,8 +246,8 @@ The `add` command inserts imports and registrations using marker comments (`# az
 
 ## See Also
 
-- [azure-functions-validation — Architecture](https://github.com/yeongseon/azure-functions-validation) — Request/response validation and serialization
-- [azure-functions-openapi — Architecture](https://github.com/yeongseon/azure-functions-openapi) — API documentation and spec generation
-- [azure-functions-logging — Architecture](https://github.com/yeongseon/azure-functions-logging) — Structured logging with contextvars
-- [azure-functions-doctor — Architecture](https://github.com/yeongseon/azure-functions-doctor) — Pre-deploy diagnostic CLI
-- [azure-functions-langgraph — Architecture](https://github.com/yeongseon/azure-functions-langgraph) — LangGraph runtime exposure for Azure Functions
+- [azure-functions-validation-python — Architecture](https://github.com/yeongseon/azure-functions-validation-python) — Request/response validation and serialization
+- [azure-functions-openapi-python — Architecture](https://github.com/yeongseon/azure-functions-openapi-python) — API documentation and spec generation
+- [azure-functions-logging-python — Architecture](https://github.com/yeongseon/azure-functions-logging-python) — Structured logging with contextvars
+- [azure-functions-doctor-python — Architecture](https://github.com/yeongseon/azure-functions-doctor-python) — Pre-deploy diagnostic CLI
+- [azure-functions-langgraph-python — Architecture](https://github.com/yeongseon/azure-functions-langgraph-python) — LangGraph runtime exposure for Azure Functions

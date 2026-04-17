@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thank you for your interest in contributing to azure-functions-scaffold! This document outlines our process for receiving and managing contributions.
+Thank you for your interest in contributing to azure-functions-scaffold-python! This document outlines our process for receiving and managing contributions.
 
 ## Project Scope
 

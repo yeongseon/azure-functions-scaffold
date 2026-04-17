@@ -1,7 +1,7 @@
-"""E2E tests for azure-functions-scaffold.
+"""E2E tests for azure-functions-scaffold-python.
 
 Tests that:
-1. `azure-functions-scaffold init` generates a valid project
+1. `azure-functions-scaffold-python init` generates a valid project
 2. The generated project deploys to Azure Functions
 3. The deployed app responds to HTTP requests
 

@@ -1,26 +1,26 @@
-# azure-functions-scaffold — Full LLM Reference
+# azure-functions-scaffold-python — Full LLM Reference
 
 > Scaffolding CLI for production-ready Azure Functions Python v2 projects.
 
 ## Package Info
 
-- PyPI: `pip install azure-functions-scaffold`
+- PyPI: `pip install azure-functions-scaffold-python`
 - Version: 0.5.0
 - Python: >=3.10, <3.15
 - License: MIT
-- Docs: https://yeongseon.github.io/azure-functions-scaffold/
-- Repository: https://github.com/yeongseon/azure-functions-scaffold
+- Docs: https://yeongseon.github.io/azure-functions-scaffold-python/
+- Repository: https://github.com/yeongseon/azure-functions-scaffold-python
 - Azure Functions programming model: v2
 
 ## Installation
 
 ```bash
-pip install azure-functions-scaffold
+pip install azure-functions-scaffold-python
 ```
 
 ## Entry Points
 
-- CLI: `azure-functions-scaffold` or `afs` (short alias)
+- CLI: `azure-functions-scaffold-python` or `afs` (short alias)
 - Python import: `from azure_functions_scaffold.scaffolder import scaffold_project`
 
 ## Complete CLI Reference
@@ -28,7 +28,7 @@ pip install azure-functions-scaffold
 ### Root Command
 
 ```bash
-azure-functions-scaffold [GROUP] [COMMAND] [OPTIONS]
+azure-functions-scaffold-python [GROUP] [COMMAND] [OPTIONS]
 afs [GROUP] [COMMAND] [OPTIONS]
 ```
 

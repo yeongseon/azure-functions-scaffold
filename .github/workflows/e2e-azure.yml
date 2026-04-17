@@ -47,7 +47,7 @@ jobs:
       - name: Generate project with scaffold CLI
         run: |
           SCAFFOLDED=/tmp/e2e-scaffolded
-          azure-functions-scaffold new "e2e-http-app" \
+          azure-functions-scaffold-python new "e2e-http-app" \
             --destination "$SCAFFOLDED" \
             --template http \
             --no-git \
@@ -71,7 +71,7 @@ jobs:
           az group create \
             --name "${{ steps.names.outputs.rg }}" \
             --location "$AZURE_LOCATION" \
-            --tags purpose=e2e repo=azure-functions-scaffold run="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            --tags purpose=e2e repo=azure-functions-scaffold-python run="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
 
       - name: Deploy infra (Bicep)
         run: |
