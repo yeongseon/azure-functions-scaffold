@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import azure.functions as func
 {%- if include_openapi %}
-from azure_functions_openapi.openapi import get_openapi_json, get_openapi_yaml
+from azure_functions_openapi.spec import get_openapi_json, get_openapi_yaml
 from azure_functions_openapi.swagger_ui import render_swagger_ui
 {%- endif %}
 
@@ -24,7 +24,7 @@ app.register_functions(webhooks_blueprint)
 @app.route(route="openapi.json", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def openapi_json(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(
-        body=get_openapi_json(app, title="{{ project_name }}", version="0.1.0"),
+        body=get_openapi_json(title="{{ project_name }}", version="0.1.0"),
         mimetype="application/json",
     )
 
@@ -32,15 +32,12 @@ def openapi_json(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="openapi.yaml", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def openapi_yaml(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(
-        body=get_openapi_yaml(app, title="{{ project_name }}", version="0.1.0"),
+        body=get_openapi_yaml(title="{{ project_name }}", version="0.1.0"),
         mimetype="text/yaml",
     )
 
 
 @app.route(route="docs", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def swagger_ui(req: func.HttpRequest) -> func.HttpResponse:
-    return func.HttpResponse(
-        body=render_swagger_ui(openapi_url="/api/openapi.json"),
-        mimetype="text/html",
-    )
+    return render_swagger_ui(openapi_url="/api/openapi.json")
 {%- endif %}

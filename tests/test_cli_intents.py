@@ -43,6 +43,8 @@ class TestApiNew:
         assert "health_blueprint" in function_app_text
         assert "webhooks_blueprint" in function_app_text
         assert "get_openapi_json" in function_app_text
+        assert "from azure_functions_openapi.spec import" in function_app_text
+        assert "azure_functions_openapi.openapi" not in function_app_text
         assert "doctor:" in makefile_text or "make doctor" in makefile_text
         # no azd by default
         assert not (project_dir / "azure.yaml").exists()
