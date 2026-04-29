@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import keyword
 import logging
 from pathlib import Path
 import re
@@ -170,6 +171,19 @@ def _normalize_function_name(function_name: str) -> str:
 
     if module_name[0].isdigit():
         raise ScaffoldError("Function name must not start with a digit.")
+
+    if not module_name.isidentifier():
+        raise ScaffoldError(
+            f"Function name '{function_name}' does not produce a valid Python "
+            f"identifier (got '{module_name}'). Use letters, numbers, hyphens, "
+            f"or underscores."
+        )
+
+    if keyword.iskeyword(module_name) or keyword.issoftkeyword(module_name):
+        raise ScaffoldError(
+            f"Function name '{function_name}' resolves to a reserved Python "
+            f"keyword ('{module_name}'). Choose a different name."
+        )
 
     return module_name
 
