@@ -1,13 +1,14 @@
 # Expanding Your Project
 
-The `add` command allows you to add new triggers to an existing project while maintaining the Blueprint structure. It automatically handles trigger registration in `function_app.py`.
+The `afs api add` and `afs advanced add` commands let you add new triggers to an existing project while maintaining the Blueprint structure. They automatically handle trigger registration in `function_app.py`.
 
-### The `add` Command
+### Add Commands
 
-Use the `add` command to append new function modules to your project root.
+Use `afs api add` for HTTP functions and `afs advanced add` for non-HTTP triggers.
 
 ```bash
-afs add <trigger-type> <function-name> --project-root <path>
+afs api add <function-name> --project-root <path>
+afs advanced add <trigger-type> <function-name> --project-root <path>
 ```
 
 When you run this command, the CLI:
@@ -19,17 +20,17 @@ When you run this command, the CLI:
 
 Add a secondary HTTP endpoint to your API:
 ```bash
-afs add http user-profile
+afs api add user-profile
 ```
 
 Add a timer trigger to an existing project:
 ```bash
-afs add timer cleanup-job
+afs advanced add timer cleanup-job
 ```
 
 Add a queue listener to handle background tasks:
 ```bash
-afs add queue task-processor
+afs advanced add queue task-processor
 ```
 
 ### Dry Run
@@ -37,12 +38,12 @@ afs add queue task-processor
 Use the `--dry-run` flag to preview which files will be created and how `function_app.py` will be modified before making any changes.
 
 ```bash
-afs add http reports --dry-run
+afs api add reports --dry-run
 ```
 
 ### Development Workflow
 
-1.  **Add Trigger**: Run the `add` command to generate the boilerplate.
+1.  **Add Trigger**: Run `afs api add` or `afs advanced add` to generate the boilerplate.
 2.  **Implement Logic**: Create a corresponding service file in `app/services/` and write your core business rules there.
 3.  **Update Schemas**: If needed, define new request/response models in `app/schemas/`.
 4.  **Add Tests**: Update the generated test file in `tests/` to verify your new function.

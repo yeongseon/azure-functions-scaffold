@@ -115,13 +115,13 @@ then restore production cadence.
 Add another timer function module:
 
 ```bash
-afs add timer cleanup_cache --project-root .
+afs advanced add timer cleanup_cache --project-root .
 ```
 
 Preview first if preferred:
 
 ```bash
-afs add timer cleanup_cache --project-root . --dry-run
+afs advanced add timer cleanup_cache --project-root . --dry-run
 ```
 
 After adding, verify:

@@ -23,7 +23,8 @@ The scaffold follows three principles:
 You will primarily configure projects through:
 
 - `afs new <name>` for project creation.
-- `afs add <trigger> <name>` for adding new function modules.
+- `afs api add <name>` for adding HTTP function modules.
+- `afs advanced add <trigger> <name>` for adding non-HTTP function modules.
 
 `afs` is a short alias for `azure-functions-scaffold` and behaves exactly the
 same.
@@ -175,7 +176,7 @@ afs new my-api --preset strict --with-openapi --dry-run
 For project expansion:
 
 ```bash
-afs add timer cleanup --project-root ./my-api --dry-run
+afs advanced add timer cleanup --project-root ./my-api --dry-run
 ```
 
 Dry-run output includes:
@@ -188,7 +189,8 @@ Dry-run output includes:
 ## `add` Command Configuration
 
 ```bash
-afs add <trigger> <function-name> --project-root <path>
+afs api add <function-name> --project-root <path>
+afs advanced add <trigger> <function-name> --project-root <path>
 ```
 
 Supported triggers:
@@ -206,7 +208,7 @@ Options:
 | `--project-root` | `.` | Existing scaffolded project directory. |
 | `--dry-run` | `False` | Preview files and updates without writing. |
 
-When successful, `add` updates `function_app.py` markers and may update
+When successful, these commands update `function_app.py` markers and may update
 `host.json` or `local.settings.json.example` depending on trigger type.
 
 ## Naming and Validation Rules
@@ -222,7 +224,7 @@ Examples:
 - valid: `my-api`, `worker_v2`, `orders2026`
 - invalid: `my api`, `-api`, `api!`
 
-Function names added through `afs add` are normalized to Python module names.
+Function names added through `afs api add` or `afs advanced add` are normalized to Python module names.
 For example, `Process Orders` becomes `process_orders`.
 
 ## Related Guides

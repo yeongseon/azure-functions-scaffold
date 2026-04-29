@@ -19,7 +19,7 @@ It generates the wiring you would otherwise repeat manually:
 ## Core Workflow
 
 1. Generate a project with `afs new`.
-2. Add triggers over time with `afs add`.
+2. Add HTTP endpoints with `afs api add` and non-HTTP triggers with `afs advanced add`.
 3. Keep business logic in services, trigger code thin.
 4. Use preset-driven quality checks in CI.
 

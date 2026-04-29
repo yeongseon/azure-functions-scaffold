@@ -154,13 +154,13 @@ Watch the terminal for log output confirming message processing.
 Add another function module to the same project:
 
 ```bash
-afs add queue cleanup --project-root .
+afs advanced add queue cleanup --project-root .
 ```
 
 Preview before writing if needed:
 
 ```bash
-afs add queue cleanup --project-root . --dry-run
+afs advanced add queue cleanup --project-root . --dry-run
 ```
 
 After adding, verify:

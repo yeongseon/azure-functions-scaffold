@@ -98,6 +98,66 @@ def new(
     )
 
 
+@app.command(
+    "add",
+    deprecated=True,
+    help="DEPRECATED: use 'afs api add' (http) or 'afs advanced add <trigger>' instead.",
+    hidden=False,
+)
+def legacy_add(
+    ctx: typer.Context,
+    trigger: str = typer.Argument(..., help="Trigger type (e.g. http, timer, queue)."),
+    function_name: str = typer.Argument(..., help="Function name."),
+    project_root: Path = typer.Option(Path("."), "--project-root", "-p", help="Project root."),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Preview without writing files."),
+) -> None:
+    """DEPRECATED shim. Forwards to the modern command."""
+    del ctx
+    normalized = trigger.strip().lower()
+    if normalized == "http":
+        replacement = f"afs api add {function_name} --project-root {project_root}"
+    else:
+        replacement = f"afs advanced add {normalized} {function_name} --project-root {project_root}"
+    typer.echo(
+        f"warning: 'afs add' is deprecated and will be removed in a future release. "
+        f"Use: {replacement}",
+        err=True,
+    )
+    from azure_functions_scaffold.errors import ScaffoldError
+    from azure_functions_scaffold.generator import add_function, describe_add_function
+
+    try:
+        if dry_run:
+            for line in describe_add_function(
+                project_root=project_root, trigger=normalized, function_name=function_name
+            ):
+                typer.echo(line)
+        else:
+            path = add_function(
+                project_root=project_root, trigger=normalized, function_name=function_name
+            )
+            typer.echo(f"Created: {path}")
+    except ScaffoldError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@app.command(
+    "profiles",
+    deprecated=True,
+    help="DEPRECATED: use 'afs presets' instead.",
+    hidden=False,
+)
+def legacy_profiles() -> None:
+    """DEPRECATED shim. Forwards to 'afs presets'."""
+    typer.echo(
+        "warning: 'afs profiles' is deprecated and will be removed in a future release. "
+        "Use: afs presets",
+        err=True,
+    )
+    show_presets()
+
+
 def main() -> None:
     app()
 

@@ -84,10 +84,10 @@ http://localhost:7071/api/docs
 
 ## 4) Add a New HTTP Endpoint Module
 
-Use `afs add` to add a second endpoint scaffold:
+Use `afs api add` to add a second endpoint scaffold:
 
 ```bash
-afs add http users --project-root .
+afs api add users --project-root .
 ```
 
 This command:
@@ -99,7 +99,7 @@ This command:
 Preview before writing if needed:
 
 ```bash
-afs add http users --project-root . --dry-run
+afs api add users --project-root . --dry-run
 ```
 
 ## 5) Customize the New Endpoint

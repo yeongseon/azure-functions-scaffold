@@ -132,7 +132,7 @@ With `--with-validation`, generated hello endpoint uses POST body validation.
 - ensure project was generated with `--with-doctor`
 - reinstall dependencies in active environment
 
-## `afs add` Problems
+## `afs api add` / `afs advanced add` Problems
 
 ### `add` cannot find scaffold project root
 
@@ -148,7 +148,7 @@ With `--with-validation`, generated hello endpoint uses POST body validation.
 **Fix**
 
 ```bash
-afs add http users --project-root ./my-api
+afs api add users --project-root ./my-api
 ```
 
 Use `--project-root` explicitly in scripts and CI.
@@ -162,7 +162,7 @@ Use `--project-root` explicitly in scripts and CI.
 **Fix**
 
 - choose a different function name, or
-- remove/rename the existing module before running `afs add` again
+- remove/rename the existing module before running `afs api add` or `afs advanced add` again
 
 ## Core Tools Runtime Issues
 
@@ -204,7 +204,7 @@ For timer/queue/blob/servicebus local workflows, ensure Azurite is running and
 
 ### Missing tests after adding a function
 
-`afs add` creates test files only when `tests/` directory exists. If your
+`afs api add` and `afs advanced add` create test files only when `tests/` directory exists. If your
 project removed tests, recreate the folder or add tests manually.
 
 ## Diagnostic Workflow

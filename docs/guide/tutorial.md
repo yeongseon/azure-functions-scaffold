@@ -177,10 +177,10 @@ Hello, Azure!
 
 ### Expand with `add`
 
-Use the `add` command to append new functions to an existing project. The CLI generates the function file, a test, and registers the blueprint in `function_app.py` automatically.
+Use `afs api add` to append HTTP functions to an existing project. The CLI generates the function file, a test, and registers the blueprint in `function_app.py` automatically.
 
 ```bash
-afs add http users --project-root .
+afs api add users --project-root .
 ```
 
 The CLI generates a skeleton for the new endpoint:
