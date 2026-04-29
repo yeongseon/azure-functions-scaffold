@@ -13,6 +13,7 @@ from azure_functions_scaffold.cli_common import (
     DestinationOption,
     DryRunOption,
     OverwriteOption,
+    YesOption,
     run_scaffold,
 )
 from azure_functions_scaffold.errors import ScaffoldError
@@ -150,6 +151,7 @@ def advanced_new(
     with_azd: AzdOption = False,
     dry_run: DryRunOption = False,
     overwrite: OverwriteOption = False,
+    yes: YesOption = False,
 ) -> None:
     """Create a new project with full option control (power-user mode)."""
     try:
@@ -181,6 +183,7 @@ def advanced_new(
         destination=destination,
         dry_run=dry_run,
         overwrite=overwrite,
+        yes=yes,
     )
 
 
