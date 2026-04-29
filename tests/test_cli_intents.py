@@ -1,3 +1,4 @@
+# pyright: reportMissingImports=false
 """Tests for intent-centric CLI subcommand groups (api, worker, ai, advanced)."""
 
 from __future__ import annotations
@@ -555,20 +556,30 @@ class TestAdvancedAddResource:
 
 
 # ---------------------------------------------------------------------------
-# Legacy commands are removed
+# Legacy commands are deprecated shims
 # ---------------------------------------------------------------------------
 
 
-class TestLegacyRemoved:
-    def test_legacy_add_command_not_available(self) -> None:
-        result = runner.invoke(app, ["add", "http", "get-user"])
-        assert result.exit_code != 0
-        assert "No such command" in result.stdout or "No such command" in (result.stderr or "")
+class TestLegacyDeprecated:
+    """Legacy commands now print a deprecation warning and forward to the new command."""
 
-    def test_legacy_profiles_command_not_available(self) -> None:
+    def test_legacy_add_warns_and_forwards_for_http(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["add", "http", "get-user", "--project-root", str(tmp_path)])
+        assert "deprecated" in result.stderr.lower()
+        assert "afs api add" in result.stderr
+
+    def test_legacy_add_suggests_advanced_for_non_http(self, tmp_path: Path) -> None:
+        result = runner.invoke(app, ["add", "queue", "sync", "--project-root", str(tmp_path)])
+        assert "deprecated" in result.stderr.lower()
+        assert "afs advanced add queue" in result.stderr
+
+    def test_legacy_profiles_warns_and_lists_presets(self) -> None:
         result = runner.invoke(app, ["profiles"])
-        assert result.exit_code != 0
-        assert "No such command" in result.stdout or "No such command" in (result.stderr or "")
+        assert result.exit_code == 0
+        assert "deprecated" in result.stderr.lower()
+        assert (
+            "minimal" in result.stdout or "standard" in result.stdout or "strict" in result.stdout
+        )
 
 
 # ---------------------------------------------------------------------------

@@ -32,7 +32,8 @@ That creates a working HTTP project scaffold with a practical default preset.
 ### Commands
 
 - `afs new <name>` creates a new project.
-- `afs add <trigger> <name>` adds a function module to an existing project.
+- `afs api add <name>` adds an HTTP function module to an existing project.
+- `afs advanced add <trigger> <name>` adds a non-HTTP function module to an existing project.
 - `afs templates` lists built-in templates.
 - `afs presets` lists quality/tooling presets.
 
@@ -111,7 +112,7 @@ afs new orders-api --preset strict --with-openapi --with-validation
 afs new nightly-job --template timer --preset standard
 
 # Add another endpoint to an existing project
-afs add http get_user --project-root ./orders-api
+afs api add get_user --project-root ./orders-api
 
 # Preview generation without writing files
 afs new sandbox-api --dry-run
@@ -137,7 +138,7 @@ afs new sandbox-api --dry-run
 
 - Project names must start with an alphanumeric character and can include
   alphanumerics, `_`, and `-`.
-- `afs add` must point to a valid scaffold project root.
+- `afs api add` and `afs advanced add` must point to a valid scaffold project root.
 - Local execution and publish flows use Azure Functions Core Tools (`func`).
 
 ## Keep Reading

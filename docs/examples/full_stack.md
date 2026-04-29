@@ -93,19 +93,19 @@ curl "http://localhost:7071/api/openapi.json"
 Add a product list endpoint:
 
 ```bash
-afs add http list_products --project-root .
+afs api add list_products --project-root .
 ```
 
 Add an order status endpoint:
 
 ```bash
-afs add http get_order_status --project-root .
+afs api add get_order_status --project-root .
 ```
 
 Use dry-run before either change if needed:
 
 ```bash
-afs add http get_order_status --project-root . --dry-run
+afs api add get_order_status --project-root . --dry-run
 ```
 
 ## 6) Add Service Layer and Contracts

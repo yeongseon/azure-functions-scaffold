@@ -31,7 +31,7 @@ If you need custom templates today:
 1. Fork or clone the project source.
 2. Add a new folder under `src/azure_functions_scaffold/templates/`.
 3. Register it in `src/azure_functions_scaffold/template_registry.py`.
-4. Add tests for generation and `afs add` behavior.
+4. Add tests for generation and function-add behavior.
 
 See [Template Specification](reference/template-spec.md) for format rules.
 
@@ -59,7 +59,7 @@ afs presets
 
 Yes for scaffolding, no for local runtime and deployment.
 
-- You can generate files with `afs new` and `afs add` without Core Tools.
+- You can generate files with `afs new`, `afs api add`, and `afs advanced add` without Core Tools.
 - You need Core Tools (`func`) to run `func start` locally.
 - You typically need Core Tools for `func azure functionapp publish ...`.
 
@@ -109,7 +109,7 @@ Yes when pytest tooling is enabled.
 - `standard` and `strict` presets include pytest and generate tests.
 - `minimal` preset does not include pytest by default.
 
-When adding functions with `afs add`, test files are created if a `tests/`
+When adding functions with `afs api add` or `afs advanced add`, test files are created if a `tests/`
 directory exists in the project.
 
 ## Does `afs` differ from `azure-functions-scaffold-python`?
@@ -129,7 +129,7 @@ Yes. Use `--dry-run` on both project creation and add flows.
 
 ```bash
 afs new my-api --preset strict --dry-run
-afs add queue process_orders --project-root ./my-api --dry-run
+afs advanced add queue process_orders --project-root ./my-api --dry-run
 ```
 
 ## Where should I start next?
